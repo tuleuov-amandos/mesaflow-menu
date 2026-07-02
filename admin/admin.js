@@ -382,6 +382,9 @@ function debounce(fn, ms) {
 }
 
 function init() {
+  closeModal();
+  els.loginError.textContent = '';
+  els.loginError.hidden = true;
   if (getToken()) {
     showPanel();
     loadOrders();
