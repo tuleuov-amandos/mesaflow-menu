@@ -142,11 +142,13 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
             customerName: payload.customer.name,
             customerPhone: payload.customer.phone,
             address: payload.fulfillment === 'DELIVERY' ? payload.address?.text ?? null : null,
+            changeForCents: payload.payment.method === 'CASH' ? payload.payment.changeForCents ?? null : null,
             notes: payload.notes ?? null,
             subtotalCents,
             deliveryFeeCents,
             totalCents,
             items: { create: itemsData },
+            history: { create: { status: 'NEW' } },
           },
         });
       } catch (error) {

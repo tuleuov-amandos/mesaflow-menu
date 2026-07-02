@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel de Pedidos — MesaFlow</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+  <link rel="stylesheet" href="../styles/variables.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+  <main class="admin">
+    <section id="loginView" class="login" hidden>
+      <form id="loginForm" class="login__card" autocomplete="off">
+        <h1 class="login__title">MesaFlow</h1>
+        <p class="login__subtitle">Painel de Pedidos</p>
+        <label class="login__label" for="password">Senha de acesso</label>
+        <input class="login__input" type="password" id="password" name="password" required />
+        <button class="btn btn--primary" type="submit" id="loginBtn">Entrar</button>
+        <p class="login__error" id="loginError" role="alert" hidden></p>
+      </form>
+    </section>
+
+    <section id="panelView" class="panel" hidden>
+      <header class="panel__top">
+        <div>
+          <h1 class="panel__title">Pedidos</h1>
+          <p class="panel__hint" id="lastUpdate"></p>
+        </div>
+        <button class="btn btn--ghost" type="button" id="logoutBtn">Sair</button>
+      </header>
+
+      <div class="summary">
+        <div class="summary__card"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Novos</span></div>
+        <div class="summary__card"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Em preparo</span></div>
+        <div class="summary__card"><span class="summary__num" id="cardFinalizados">0</span><span class="summary__lbl">Finalizados</span></div>
+      </div>
+
+      <div class="filters">
+        <input class="filters__search" type="search" id="searchInput" placeholder="Buscar por código, nome ou telefone" />
+        <select class="filters__status" id="statusFilter">
+          <option value="">Todos os status</option>
+          <option value="NEW">Novo</option>
+          <option value="CONFIRMED">Confirmado</option>
+          <option value="PREPARING">Em preparo</option>
+          <option value="READY">Pronto</option>
+          <option value="DELIVERED">Finalizado</option>
+          <option value="CANCELED">Cancelado</option>
+        </select>
+      </div>
+
+      <p class="panel__empty" id="ordersEmpty" hidden>Nenhum pedido encontrado.</p>
+      <ul class="orders" id="ordersList"></ul>
+    </section>
+
+    <div class="modal" id="detailModal" hidden>
+      <div class="modal__backdrop" data-close></div>
+      <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="detailCode">
+        <button class="modal__close" type="button" data-close aria-label="Fechar">×</button>
+        <div id="detailContent" class="detail"></div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>

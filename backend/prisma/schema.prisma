@@ -94,6 +94,7 @@ model Order {
   customerName    String?
   customerPhone   String?
   address         String?
+  changeForCents  Int?
   notes           String?
   subtotalCents   Int             @default(0)
   deliveryFeeCents Int            @default(0)
@@ -103,9 +104,21 @@ model Order {
 
   restaurant Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   items      OrderItem[]
+  history    OrderStatusHistory[]
 
   @@index([restaurantId])
   @@index([status])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  createdAt DateTime    @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }
 
 model OrderItem {

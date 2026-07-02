@@ -3,6 +3,7 @@ import cors from 'cors';
 import healthRoutes from './routes/health.js';
 import publicMenuRoutes from './routes/public-menu.js';
 import orderRoutes from './routes/orders.js';
+import adminRoutes from './routes/admin.js';
 import { notFound, errorHandler } from './middlewares/error-handler.js';
 
 const STATIC_ALLOWED_ORIGINS = ['https://mesaflow-menu.vercel.app'];
@@ -32,6 +33,7 @@ export function createApp() {
   app.use('/api', healthRoutes);
   app.use('/api/public', publicMenuRoutes);
   app.use('/api/public', orderRoutes);
+  app.use('/api/admin', adminRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
