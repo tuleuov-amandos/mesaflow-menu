@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  READY
+  DELIVERED
+  CANCELED
+}
+
+enum FulfillmentType {
+  DELIVERY
+  PICKUP
+}
+
+enum PaymentMethod {
+  PIX
+  CARD
+  CASH
+}
+
+model Restaurant {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  phone            String?
+  whatsapp         String?
+  deliveryFeeCents Int      @default(0)
+  minimumOrderCents Int     @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  categories Category[]
+  products   Product[]
+  orders     Order[]
+}
+
+model Category {
+  id           String  @id @default(cuid())
+  restaurantId String
+  name         String
+  slug         String
+  sortOrder    Int     @default(0)
+  active       Boolean @default(true)
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@unique([restaurantId, slug])
+  @@index([restaurantId])
+}
+
+model Product {
+  id                  String   @id @default(cuid())
+  restaurantId        String
+  categoryId          String
+  externalId          String
+  name                String
+  description         String?
+  priceCents          Int
+  imagePath           String?
+  prepTimeMinutes     Int?
+  badges              Json?
+  customizationConfig Json?
+  active              Boolean  @default(true)
+  featured            Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@unique([restaurantId, externalId])
+  @@index([restaurantId])
+  @@index([categoryId])
+}
+
+model Order {
+  id              String          @id @default(cuid())
+  restaurantId    String
+  publicCode      String          @unique
+  status          OrderStatus     @default(NEW)
+  fulfillmentType FulfillmentType @default(DELIVERY)
+  paymentMethod   PaymentMethod   @default(PIX)
+  customerName    String?
+  customerPhone   String?
+  address         String?
+  notes           String?
+  subtotalCents   Int             @default(0)
+  deliveryFeeCents Int            @default(0)
+  totalCents      Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  items      OrderItem[]
+
+  @@index([restaurantId])
+  @@index([status])
+}
+
+model OrderItem {
+  id             String @id @default(cuid())
+  orderId        String
+  productId      String?
+  productName    String
+  unitPriceCents Int
+  quantity       Int    @default(1)
+  customizations Json?
+  lineTotalCents Int
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+}

@@ -109,6 +109,41 @@ Capturas em `prints/` (ver `prints/README.md` para a lista e os nomes esperados)
 
 ---
 
+## Backend em evolução
+
+A interface pública atual continua funcionando como **frontend estático** (HTML/CSS/JS
+na raiz) e é ela que está publicada em produção. Em paralelo, o `backend/` inicia a
+fundação de um backend real, preparando o MesaFlow para pedidos persistidos e painel
+operacional nas próximas etapas.
+
+**Stack:** Node.js + Express + Prisma + PostgreSQL (ES Modules).
+
+**Modelos:** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem` (valores monetários
+sempre em centavos, como inteiros).
+
+**Endpoints disponíveis nesta etapa:**
+
+- `GET /api/health` → `{ "status": "ok" }`
+- `GET /api/public/restaurants/beco-da-chapa/menu` → cardápio público (restaurante,
+  categorias e produtos ativos)
+
+O seed reutiliza `src/data.js` como fonte única (sem duplicar o cardápio) e é idempotente.
+
+```bash
+cd backend
+cp .env.example .env          # aponte DATABASE_URL para um PostgreSQL local
+npm install
+npm run prisma:generate
+npm run prisma:migrate
+npm run seed
+npm run dev                   # sobe a API em http://localhost:3333
+```
+
+> Nesta etapa o frontend **ainda não** consome a API. A próxima etapa conectará o
+> checkout ao backend para registrar pedidos.
+
+---
+
 ## Roadmap — ecossistema MesaFlow
 
 - **MesaFlow Menu** — concluído
