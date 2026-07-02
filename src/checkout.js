@@ -1,5 +1,6 @@
 import { STORE, formatPrice } from './data.js';
 import { getItems, getSubtotal, clearCart } from './cart.js';
+import { createOrder, isApiEnabled } from './api.js';
 
 export function initCheckoutForm(formEl, onSuccess) {
   const deliveryTypeInputs = formEl.querySelectorAll('[name="deliveryType"]');
@@ -7,27 +8,58 @@ export function initCheckoutForm(formEl, onSuccess) {
   const paymentInputs = formEl.querySelectorAll('[name="payment"]');
   const changeGroup = formEl.querySelector('#changeGroup');
 
+  const syncConditionalGroups = () => {
+    const isDelivery = formEl.querySelector('[name="deliveryType"]:checked')?.value === 'delivery';
+    isDelivery ? addressGroup.removeAttribute('hidden') : addressGroup.setAttribute('hidden', '');
+    const isCash = formEl.querySelector('[name="payment"]:checked')?.value === 'dinheiro';
+    isCash ? changeGroup.removeAttribute('hidden') : changeGroup.setAttribute('hidden', '');
+  };
+
+  const resetForm = () => {
+    formEl.reset();
+    formEl.querySelectorAll('.form-error').forEach(el => el.remove());
+    formEl.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    syncConditionalGroups();
+  };
+
   deliveryTypeInputs.forEach(input => {
-    input.addEventListener('change', () => {
-      const isDelivery = input.value === 'delivery';
-      isDelivery ? addressGroup.removeAttribute('hidden') : addressGroup.setAttribute('hidden', '');
-    });
+    input.addEventListener('change', syncConditionalGroups);
   });
 
   paymentInputs.forEach(input => {
-    input.addEventListener('change', () => {
-      input.value === 'dinheiro'
-        ? changeGroup.removeAttribute('hidden')
-        : changeGroup.setAttribute('hidden', '');
-    });
+    input.addEventListener('change', syncConditionalGroups);
   });
 
-  formEl.addEventListener('submit', (e) => {
+  const submitBtn = formEl.querySelector('[type="submit"]');
+
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validate(formEl)) return;
     const data = buildFormData(formEl);
-    const message = buildWhatsAppMessage(data);
+
+    let orderCode = null;
+    if (isApiEnabled()) {
+      const originalLabel = submitBtn?.textContent;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando pedido...';
+      }
+      try {
+        const result = await createOrder(buildOrderPayload(data));
+        orderCode = result.order?.publicCode ?? null;
+      } catch (err) {
+        console.warn('Pedido não persistido, seguindo apenas pelo WhatsApp:', err);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        }
+      }
+    }
+
+    const message = buildWhatsAppMessage(data, orderCode);
     sendToWhatsApp(message);
+    resetForm();
     onSuccess();
   });
 }
@@ -125,7 +157,43 @@ function buildFormData(formEl) {
   };
 }
 
-function buildWhatsAppMessage(data) {
+function parseChangeToCents(value) {
+  if (!value) return null;
+  const normalized = value.replace(/[^\d,.-]/g, '').replace(',', '.');
+  const amount = parseFloat(normalized);
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+  return Math.round(amount * 100);
+}
+
+function buildOrderPayload(data) {
+  const items = getItems();
+  const paymentMap = { pix: 'PIX', cartao: 'CARD', dinheiro: 'CASH' };
+  const method = paymentMap[data.payment] ?? 'PIX';
+  const isDelivery = data.deliveryType === 'delivery';
+
+  return {
+    customer: { name: data.name, phone: data.phone },
+    fulfillment: isDelivery ? 'DELIVERY' : 'PICKUP',
+    address: isDelivery ? { text: data.address } : undefined,
+    payment: {
+      method,
+      changeForCents: method === 'CASH' ? parseChangeToCents(data.change) : null,
+    },
+    notes: data.notes || undefined,
+    items: items.map((i) => ({
+      externalProductId: String(i.id),
+      quantity: i.qty,
+      customizations: {
+        removes: i.removes ?? [],
+        extras: i.extras ?? [],
+        meatPoint: i.meatPoint ?? null,
+        drinkChoice: i.drinkChoice ?? null,
+      },
+    })),
+  };
+}
+
+function buildWhatsAppMessage(data, orderCode = null) {
   const items = getItems();
   const subtotal = getSubtotal();
   const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
@@ -151,6 +219,7 @@ function buildWhatsAppMessage(data) {
 
   const lines = [
     `🔥 *${STORE.name} — Novo Pedido*`,
+    orderCode ? `🧾 *Pedido:* ${orderCode}` : null,
     ``,
     `👤 *Cliente:* ${data.name}`,
     `📱 *WhatsApp:* ${data.phone}`,
