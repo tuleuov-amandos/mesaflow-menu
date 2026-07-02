@@ -1,0 +1,95 @@
+:root {
+  /* Colors */
+  --clr-bg: #080808;
+  --clr-bg-card: #111111;
+  --clr-bg-elevated: #1a1a1a;
+  --clr-bg-overlay: rgba(0, 0, 0, 0.75);
+
+  --clr-accent: #f97316;
+  --clr-accent-dark: #c2610f;
+  --clr-accent-light: rgba(249, 115, 22, 0.12);
+  --clr-accent-border: rgba(249, 115, 22, 0.35);
+
+  --clr-text-primary: #f2f2f2;
+  --clr-text-secondary: #a0a0a0;
+  --clr-text-muted: #555555;
+
+  --clr-border: #222222;
+  --clr-border-hover: #333333;
+
+  --clr-success: #22c55e;
+  --clr-error: #ef4444;
+  --clr-info: #3b82f6;
+
+  /* Typography */
+  --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.7);
+  --shadow-accent: 0 4px 24px rgba(249, 115, 22, 0.3);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 64px;
+  --cart-width: 420px;
+
+  /* Z-index */
+  --z-header: 100;
+  --z-cart: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --cart-width: 100vw;
+    --text-5xl: 2.25rem;
+    --text-6xl: 2.75rem;
+  }
+}

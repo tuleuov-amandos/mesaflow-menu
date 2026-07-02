@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Beco da Chapa — Hambúrgueres artesanais feitos na hora. Peça agora pelo WhatsApp.">
+  <!-- URL pública: manter igual a SITE_URL em src/config.js e ao QR em assets/images/qr-code.png -->
+  <link rel="canonical" href="https://mesaflow-menu.vercel.app">
+  <meta property="og:title" content="Beco da Chapa — Cardápio Digital">
+  <meta property="og:description" content="Hambúrgueres artesanais feitos na hora, blends selecionados e muito sabor. Peça agora!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mesaflow-menu.vercel.app">
+  <title>Beco da Chapa — Cardápio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles/reset.css">
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/pages.css">
+</head>
+<body>
+
+  <!-- ═══ Header ════════════════════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo" aria-label="Beco da Chapa — início">
+        <span class="header__logo-icon" aria-hidden="true">🔥</span>
+        Beco da Chapa
+      </a>
+
+      <nav class="header__nav" aria-label="Navegação principal">
+        <a href="#cardapio">Cardápio</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#avaliacoes">Avaliações</a>
+        <a href="#contato">Contato</a>
+      </nav>
+
+      <button class="cart-btn" id="cartBtn" aria-label="Abrir carrinho">
+        <svg class="cart-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-btn__count hidden" id="cartCount" aria-live="polite">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══ Hero ══════════════════════════════════════════════════════════════ -->
+    <section class="hero" aria-label="Banner principal">
+
+      <div class="hero__content">
+        <div class="hero__eyebrow">
+          <span aria-hidden="true">🔥</span>
+          Artesanal desde 2019
+        </div>
+
+        <h1 class="hero__title">
+          Burgers que<br>
+          <span class="accent">incendeiam</span><br>
+          o paladar
+        </h1>
+
+        <p class="hero__subtitle">
+          Hambúrgueres artesanais feitos na hora, com blends selecionados e ingredientes frescos.
+          Peça agora e receba em até 40 minutos.
+        </p>
+
+        <div class="hero__rating">
+          <div class="hero__rating-stars">
+            <span class="hero__stars" aria-hidden="true">★★★★★</span>
+            <span class="hero__rating-score">4.9</span>
+          </div>
+          <span class="hero__rating-count">+1.200 pedidos</span>
+          <div class="hero__rating-divider" aria-hidden="true"></div>
+          <div class="hero__stat">
+            <div class="hero__stat-value">25–40</div>
+            <div class="hero__stat-label">min entrega</div>
+          </div>
+          <div class="hero__rating-divider" aria-hidden="true"></div>
+          <div class="hero__stat">
+            <div class="hero__stat-value">R$ 30</div>
+            <div class="hero__stat-label">pedido mín.</div>
+          </div>
+        </div>
+
+        <div class="hero__actions">
+          <a href="#cardapio" class="btn btn--primary btn--lg">Ver Cardápio</a>
+          <button class="btn btn--ghost btn--lg" id="heroShareBtn">Compartilhar 🔗</button>
+        </div>
+
+        <div class="hero__info" role="list" aria-label="Informações rápidas">
+          <div class="hero__info-chip" role="listitem">
+            <span class="status-dot" id="storeStatusDot"></span>
+            <span id="storeStatusText">Verificando...</span>
+          </div>
+          <div class="hero__info-chip" role="listitem">
+            <span aria-hidden="true">💳</span>
+            Pix, Cartão, Dinheiro
+          </div>
+          <div class="hero__info-chip" role="listitem">
+            <span aria-hidden="true">🛵</span>
+            Frete: R$ 8,00
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__image">
+        <img
+          src="assets/images/hero.jpg"
+          alt="Hambúrguer artesanal Beco da Chapa"
+          loading="eager"
+          fetchpriority="high"
+        >
+        <div class="hero__image-overlay" aria-hidden="true"></div>
+      </div>
+
+    </section>
+
+    <!-- ═══ Catalog ═══════════════════════════════════════════════════════════ -->
+    <section class="catalog" id="cardapio" aria-label="Cardápio">
+      <div class="container">
+
+        <!-- Store closed -->
+        <div class="store-closed-banner" id="storeClosedBanner" hidden role="alert">
+          <span aria-hidden="true">🔒</span>
+          <span>Estamos fechados agora. Horário: Seg–Sex 18h–23h | Sáb–Dom 12h–23h30</span>
+        </div>
+
+        <!-- Rotating promo banner -->
+        <div class="promo-banner" id="promoBanner">
+          <div class="promo-banner__content">
+            <span class="promo-banner__icon" id="promoBannerIcon" aria-hidden="true">🎉</span>
+            <span class="promo-banner__text" id="promoBannerText">Frete grátis em pedidos acima de R$ 80,00!</span>
+          </div>
+          <button class="promo-banner__dismiss" id="promoBannerDismiss" aria-label="Fechar banner">✕</button>
+        </div>
+
+        <!-- Featured -->
+        <div class="featured">
+          <h2 class="section-title">Em Destaque</h2>
+          <div class="featured__scroll" id="featuredProducts" role="list" aria-label="Produtos em destaque"></div>
+        </div>
+
+        <!-- Catalog controls -->
+        <div class="catalog__controls">
+          <div class="search-bar">
+            <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Buscar produtos..."
+              autocomplete="off"
+              aria-label="Buscar produtos"
+            >
+          </div>
+          <div class="category-filter" id="categoryFilter" role="tablist" aria-label="Filtrar por categoria"></div>
+        </div>
+
+        <!-- Products grid -->
+        <div class="products-grid" id="productsGrid" role="list" aria-label="Produtos"></div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyState" hidden role="status">
+          <div class="empty-state__icon" aria-hidden="true">🔍</div>
+          <h3 class="empty-state__title">Nenhum produto encontrado</h3>
+          <p class="empty-state__subtitle">Tente buscar por outro termo ou escolha outra categoria</p>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('searchInput').value='';document.getElementById('searchInput').dispatchEvent(new Event('input'))">
+            Limpar busca
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ About ══════════════════════════════════════════════════════════════ -->
+    <section class="about" id="sobre" aria-label="Sobre nós">
+      <div class="container">
+        <div class="about__grid">
+          <div>
+            <p class="about__eyebrow">Nossa história</p>
+            <h2 class="about__title">Paixão pelo fogo,<br>respeito pelo sabor</h2>
+            <p class="about__text">
+              Nascemos em 2019 com uma missão simples: fazer o hambúrguer artesanal que a gente queria comer.
+              Blends desenvolvidos com carnes nacionais selecionadas, pão brioche assado diariamente e ingredientes que fazem diferença.
+            </p>
+            <p class="about__text">
+              Cada pedido sai da nossa cozinha com o mesmo cuidado do primeiro.
+              Sem atalhos, sem congelado, sem pressa. Se demorar um pouco mais, é porque está no ponto certo.
+            </p>
+            <div class="about__stats">
+              <div>
+                <div class="about__stat-value">5+</div>
+                <div class="about__stat-label">Anos de história</div>
+              </div>
+              <div>
+                <div class="about__stat-value">12k</div>
+                <div class="about__stat-label">Pedidos entregues</div>
+              </div>
+              <div>
+                <div class="about__stat-value">4.9★</div>
+                <div class="about__stat-label">Avaliação média</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="about__gallery">
+            <div class="about__gallery-main about__gallery-img">
+              <img
+                src="assets/images/about-burger.jpg"
+                alt="Hambúrguer artesanal da Beco da Chapa"
+                loading="lazy"
+              >
+            </div>
+            <div class="about__gallery-img">
+              <img
+                src="assets/images/about-ambiente.jpg"
+                alt="Ambiente interno da Beco da Chapa"
+                loading="lazy"
+              >
+            </div>
+            <div class="about__gallery-img">
+              <img
+                src="assets/images/about-cozinha.jpg"
+                alt="Cozinha da Beco da Chapa"
+                loading="lazy"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Reviews ═══════════════════════════════════════════════════════════ -->
+    <section class="reviews" id="avaliacoes" aria-label="Avaliações dos clientes">
+      <div class="container">
+        <div class="reviews__header">
+          <div>
+            <p class="section-eyebrow">O que dizem nossos clientes</p>
+            <h2 class="section-title" style="margin-bottom: 0">Avaliações</h2>
+            <div class="reviews__aggregate">
+              <span class="reviews__aggregate-score">4.9</span>
+              <div>
+                <div class="reviews__aggregate-stars" aria-label="4.9 de 5 estrelas">★★★★★</div>
+                <div class="reviews__aggregate-count">Baseado em +1.200 pedidos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reviews__scroll" id="reviewsContainer" role="list" aria-label="Avaliações"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ Footer ════════════════════════════════════════════════════════════ -->
+  <footer class="footer" id="contato" aria-label="Rodapé">
+    <div class="container">
+
+      <div class="footer__map" aria-label="Localização aproximada">
+        <div class="footer__map-grid" aria-hidden="true"></div>
+        <div class="footer__map-pin" aria-hidden="true"></div>
+        <span class="footer__map-icon" aria-hidden="true">📍</span>
+        <span>Rua das Brasas, 42 — Vila Madalena, São Paulo – SP</span>
+      </div>
+
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">
+            <span aria-hidden="true">🔥</span> Beco da Chapa
+          </div>
+          <p class="footer__brand-desc">
+            Hambúrgueres artesanais feitos na hora, com ingredientes selecionados. Entregamos alegria a cada mordida.
+          </p>
+          <div class="footer__social">
+            <span class="footer__social-btn" aria-label="Instagram (demonstração)">
+              <span aria-hidden="true">📸</span> Instagram
+            </span>
+            <span class="footer__social-btn" aria-label="WhatsApp (demonstração)">
+              <span aria-hidden="true">💬</span> WhatsApp
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Horário</div>
+          <div class="footer__links">
+            <span>Seg–Sex: 18h às 23h</span>
+            <span>Sáb–Dom: 12h às 23h30</span>
+            <span style="color: var(--clr-text-muted); margin-top: 4px">Fechado às segundas</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Contato</div>
+          <div class="footer__links">
+            <span>(11) 99999-9999</span>
+            <span>WhatsApp: peça pelo carrinho</span>
+            <span>oi@becodachapa.com.br</span>
+            <span style="margin-top: 4px">Rua das Brasas, 42<br>Vila Madalena – SP</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="footer__col-title">Cardápio no celular</div>
+          <div class="footer__qr">
+            <p class="footer__qr-label">Escaneie o QR Code para acessar o cardápio no celular</p>
+            <img
+              src="assets/images/qr-code.png"
+              alt="QR Code do cardápio Beco da Chapa"
+              loading="lazy"
+              width="100"
+              height="100"
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span class="footer__copy">© 2025 Beco da Chapa. Todos os direitos reservados.</span>
+        <span class="footer__powered">
+          Cardápio digital por <a href="#" target="_blank">MesaFlow Menu</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ Cart Overlay ══════════════════════════════════════════════════════ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <!-- ═══ Cart Drawer ═══════════════════════════════════════════════════════ -->
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Carrinho de compras" role="dialog" aria-modal="true">
+    <div class="cart-drawer__header">
+      <h2 class="cart-drawer__title">Seu Pedido</h2>
+      <button class="cart-drawer__close" id="closeCartBtn" aria-label="Fechar carrinho">✕</button>
+    </div>
+    <div class="cart-drawer__body" id="cartDrawerBody"></div>
+    <div class="cart-drawer__footer" id="cartDrawerFooter"></div>
+  </aside>
+
+  <!-- ═══ Modal Overlay ════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay" aria-hidden="true"></div>
+
+  <!-- ═══ Checkout Modal ════════════════════════════════════════════════════ -->
+  <div class="modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutModalTitle">
+    <div class="modal__header">
+      <button class="modal__back" id="backToCartBtn" aria-label="Voltar ao carrinho">← Carrinho</button>
+      <h2 class="modal__title" id="checkoutModalTitle">Finalizar Pedido</h2>
+      <button class="modal__close" id="closeModalBtn" aria-label="Fechar">✕</button>
+    </div>
+
+    <div class="modal__body">
+      <div id="checkoutSummary"></div>
+
+      <form id="checkoutForm" novalidate>
+
+        <div class="form-section">
+          <div class="form-section__title">Seus dados</div>
+          <div class="form-group">
+            <label class="form-label" for="customerName">Nome completo <span>*</span></label>
+            <input class="form-input" type="text" id="customerName" placeholder="Seu nome" autocomplete="name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="customerPhone">WhatsApp <span>*</span></label>
+            <input class="form-input" type="tel" id="customerPhone" placeholder="(11) 99999-9999" autocomplete="tel" required>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section__title">Entrega</div>
+          <div class="form-group" id="deliveryTypeGroup">
+            <div class="toggle-group">
+              <label class="toggle-option">
+                <input type="radio" name="deliveryType" value="delivery" checked>
+                <div class="toggle-option__label">
+                  <span class="toggle-option__icon">🛵</span>
+                  <span class="toggle-option__text">Delivery</span>
+                </div>
+              </label>
+              <label class="toggle-option">
+                <input type="radio" name="deliveryType" value="retirada">
+                <div class="toggle-option__label">
+                  <span class="toggle-option__icon">🏃</span>
+                  <span class="toggle-option__text">Retirada</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group" id="addressGroup">
+            <label class="form-label" for="address">Endereço completo <span>*</span></label>
+            <input class="form-input" type="text" id="address" placeholder="Rua, número, complemento, bairro" autocomplete="street-address">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section__title">Pagamento</div>
+          <div class="form-group" id="paymentGroup">
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="payment" value="pix" checked>
+                <div class="payment-option__label">
+                  <span class="payment-option__icon">💠</span>
+                  <span class="payment-option__text">Pix</span>
+                </div>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment" value="cartao">
+                <div class="payment-option__label">
+                  <span class="payment-option__icon">💳</span>
+                  <span class="payment-option__text">Cartão</span>
+                </div>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment" value="dinheiro">
+                <div class="payment-option__label">
+                  <span class="payment-option__icon">💵</span>
+                  <span class="payment-option__text">Dinheiro</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group" id="changeGroup" hidden>
+            <label class="form-label" for="change">Troco para quanto?</label>
+            <input class="form-input" type="number" id="change" placeholder="R$ 50,00" min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section__title">Observações</div>
+          <div class="form-group">
+            <label class="form-label" for="notes">Alguma observação?</label>
+            <textarea class="form-input" id="notes" placeholder="Ex: sem cebola, alergia a glúten..."></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg">
+          Enviar pedido no WhatsApp 🟢
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ Customization Overlay ═════════════════════════════════════════════ -->
+  <div class="customize-overlay" id="customizeOverlay" aria-hidden="true"></div>
+
+  <!-- ═══ Customization Modal ══════════════════════════════════════════════ -->
+  <div class="customize-modal" id="customizeModal" role="dialog" aria-modal="true" aria-labelledby="customizeTitle">
+    <div class="customize-modal__handle" aria-hidden="true"></div>
+    <div class="customize-modal__header">
+      <h3 class="customize-modal__title" id="customizeTitle">Personalizar</h3>
+      <button class="customize-modal__close" id="customizeCloseBtn" aria-label="Fechar">✕</button>
+    </div>
+    <div class="customize-modal__body" id="customizeBody"></div>
+    <div class="customize-modal__footer">
+      <button class="btn btn--primary btn--full" id="customizeConfirmBtn">
+        Adicionar ao pedido
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ Toast container ════════════════════════════════════════════════════ -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ═══ Floating cart bar (mobile) ═══════════════════════════════════════ -->
+  <div class="cart-bar" id="cartBar" hidden aria-live="polite">
+    <span class="cart-bar__info" id="cartBarInfo">0 itens</span>
+    <button class="cart-bar__btn" id="cartBarBtn">Ver carrinho</button>
+  </div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
