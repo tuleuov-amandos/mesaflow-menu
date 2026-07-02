@@ -11,6 +11,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mesaflow-menu.vercel.app">
   <title>Beco da Chapa — Cardápio</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -264,11 +265,19 @@
   <footer class="footer" id="contato" aria-label="Rodapé">
     <div class="container">
 
-      <div class="footer__map" aria-label="Localização aproximada">
-        <div class="footer__map-grid" aria-hidden="true"></div>
-        <div class="footer__map-pin" aria-hidden="true"></div>
-        <span class="footer__map-icon" aria-hidden="true">📍</span>
-        <span>Rua das Brasas, 42 — Vila Madalena, São Paulo – SP</span>
+      <div class="footer__location" aria-label="Localização do restaurante Beco da Chapa">
+        <span class="footer__location-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s7-6.13 7-11a7 7 0 1 0-14 0c0 4.87 7 11 7 11Z"
+              stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <circle cx="12" cy="10" r="2.5" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </span>
+        <div class="footer__location-info">
+          <span class="footer__location-label">Localização</span>
+          <span class="footer__location-title">Beco da Chapa</span>
+          <span class="footer__location-text">Rua das Brasas, 42 — Vila Madalena, São Paulo – SP</span>
+        </div>
       </div>
 
       <div class="footer__grid">
@@ -324,9 +333,9 @@
       </div>
 
       <div class="footer__bottom">
-        <span class="footer__copy">© 2025 Beco da Chapa. Todos os direitos reservados.</span>
+        <span class="footer__copy">© 2026 Beco da Chapa. Todos os direitos reservados.</span>
         <span class="footer__powered">
-          Cardápio digital por <a href="#" target="_blank">MesaFlow Menu</a>
+          Cardápio digital por <span class="footer__powered-brand">MesaFlow</span>
         </span>
       </div>
     </div>

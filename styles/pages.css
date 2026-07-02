@@ -581,58 +581,56 @@
   padding: 6px;
 }
 
-/* Map placeholder */
+/* Location card */
 
-.footer__map {
-  width: 100%;
-  aspect-ratio: 16 / 7;
+.footer__location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
   background: var(--clr-bg-elevated);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.footer__location-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  color: var(--clr-text-muted);
+  border-radius: var(--radius-md);
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--clr-accent);
+}
+
+.footer__location-icon svg { width: 22px; height: 22px; }
+
+.footer__location-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.footer__location-label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-accent);
+}
+
+.footer__location-title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--clr-text-primary);
+}
+
+.footer__location-text {
   font-size: var(--text-sm);
-  margin-bottom: var(--space-8);
-  overflow: hidden;
-  position: relative;
-}
-
-.footer__map-icon { font-size: 2rem; }
-
-.footer__map-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 30px 30px;
-  pointer-events: none;
-}
-
-.footer__map-pin {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  background: var(--clr-accent);
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  box-shadow: 0 0 0 4px rgba(249,115,22,0.2);
-}
-
-.footer__map-pin::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  color: var(--clr-text-secondary);
 }
 
 .footer__bottom {
