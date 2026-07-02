@@ -7,7 +7,7 @@ export const SITE_URL = 'https://mesaflow-menu.vercel.app';
 // URL da API de pedidos (backend MesaFlow no Render). Preencha DEPOIS de criar
 // o Web Service no Render (ex.: 'https://mesaflow-api.onrender.com'). Enquanto
 // estiver vazia, produção segue apenas pelo WhatsApp, sem tentar chamar a API.
-const PROD_API_URL = '';
+const PROD_API_URL = 'https://mesaflow-api-1hys.onrender.com';
 
 // Base da API por ambiente: local usa o backend em localhost:3333; produção usa
 // PROD_API_URL. Nunca aponta para localhost fora da máquina de desenvolvimento —
