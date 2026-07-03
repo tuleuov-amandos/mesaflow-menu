@@ -97,7 +97,7 @@ router.get('/orders', requireAdmin, async (req, res, next) => {
       summary: {
         novos: counts.NEW ?? 0,
         emPreparo: counts.PREPARING ?? 0,
-        finalizados: counts.DELIVERED ?? 0,
+        finalizados: counts.FINALIZED ?? 0,
       },
     });
   } catch (error) {
@@ -123,6 +123,7 @@ router.get('/orders/:id', requireAdmin, async (req, res, next) => {
         ...serializeSummaryOrder(order),
         address: order.address,
         changeForCents: order.changeForCents,
+        etaMinutes: order.etaMinutes,
         notes: order.notes,
         subtotalCents: order.subtotalCents,
         deliveryFeeCents: order.deliveryFeeCents,
@@ -136,9 +137,11 @@ router.get('/orders/:id', requireAdmin, async (req, res, next) => {
         history: order.history.map((h) => ({
           status: h.status,
           statusLabel: STATUS_LABELS[h.status] ?? h.status,
+          note: h.note,
+          etaMinutes: h.etaMinutes,
           createdAt: h.createdAt,
         })),
-        nextStatuses: nextStatuses(order.status),
+        nextStatuses: nextStatuses(order.status, order.fulfillmentType),
       },
     });
   } catch (error) {
@@ -146,13 +149,21 @@ router.get('/orders/:id', requireAdmin, async (req, res, next) => {
   }
 });
 
+const DEFAULT_ETA_MINUTES = 35;
+
+const statusPatchSchema = z.object({
+  status: z.enum(ORDER_STATUSES),
+  etaMinutes: z.number().int().min(5).max(180).optional(),
+  note: z.string().trim().min(1).max(300).optional(),
+});
+
 router.patch('/orders/:id/status', requireAdmin, async (req, res, next) => {
   try {
-    const parsed = z.object({ status: z.enum(ORDER_STATUSES) }).safeParse(req.body);
+    const parsed = statusPatchSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(422).json({ error: 'Status inválido.' });
+      return res.status(422).json({ error: 'Dados inválidos.', issues: parsed.error.issues });
     }
-    const target = parsed.data.status;
+    const { status: target, etaMinutes, note } = parsed.data;
 
     const current = await prisma.order.findUnique({ where: { id: req.params.id } });
     if (!current) {
@@ -161,15 +172,29 @@ router.patch('/orders/:id/status', requireAdmin, async (req, res, next) => {
     if (current.status === target) {
       return res.status(409).json({ error: 'O pedido já está nesse status.' });
     }
-    if (!canTransition(current.status, target)) {
+    if (!canTransition(current.status, target, current.fulfillmentType)) {
       return res.status(409).json({
         error: `Transição não permitida: ${STATUS_LABELS[current.status]} → ${STATUS_LABELS[target]}.`,
       });
     }
+    if (target === 'CANCELED' && !note) {
+      return res.status(422).json({ error: 'Motivo do cancelamento é obrigatório.' });
+    }
+
+    const orderData = { status: target };
+    const historyData = { orderId: current.id, status: target };
+    if (target === 'CONFIRMED') {
+      const eta = etaMinutes ?? DEFAULT_ETA_MINUTES;
+      orderData.etaMinutes = eta;
+      historyData.etaMinutes = eta;
+    }
+    if (target === 'CANCELED') {
+      historyData.note = note;
+    }
 
     const [updated] = await prisma.$transaction([
-      prisma.order.update({ where: { id: current.id }, data: { status: target } }),
-      prisma.orderStatusHistory.create({ data: { orderId: current.id, status: target } }),
+      prisma.order.update({ where: { id: current.id }, data: orderData }),
+      prisma.orderStatusHistory.create({ data: historyData }),
     ]);
 
     res.json({
@@ -177,7 +202,8 @@ router.patch('/orders/:id/status', requireAdmin, async (req, res, next) => {
         id: updated.id,
         status: updated.status,
         statusLabel: STATUS_LABELS[updated.status] ?? updated.status,
-        nextStatuses: nextStatuses(updated.status),
+        etaMinutes: updated.etaMinutes,
+        nextStatuses: nextStatuses(updated.status, updated.fulfillmentType),
       },
     });
   } catch (error) {

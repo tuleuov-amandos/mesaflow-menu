@@ -56,6 +56,7 @@ const BURGER_CUSTOMIZATIONS = {
     { label: 'Ovo frito', price: 2.90 },
     { label: 'Molho especial', price: 1.90 },
   ],
+  supportsMeatDoneness: true,
   meatPoints: ['Mal passado', 'Ao ponto', 'Bem passado'],
   defaultMeatPoint: 'Ao ponto',
 };
@@ -90,7 +91,7 @@ export const PRODUCTS = [
     featured: true,
     available: true,
     prepTime: '12–18 min',
-    customizations: BURGER_CUSTOMIZATIONS,
+    customizations: { ...BURGER_CUSTOMIZATIONS, supportsMeatDoneness: false },
   },
   {
     id: 3,

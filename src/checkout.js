@@ -180,16 +180,19 @@ function buildOrderPayload(data) {
       changeForCents: method === 'CASH' ? parseChangeToCents(data.change) : null,
     },
     notes: data.notes || undefined,
-    items: items.map((i) => ({
-      externalProductId: String(i.id),
-      quantity: i.qty,
-      customizations: {
+    items: items.map((i) => {
+      const customizations = {
         removes: i.removes ?? [],
         extras: i.extras ?? [],
-        meatPoint: i.meatPoint ?? null,
         drinkChoice: i.drinkChoice ?? null,
-      },
-    })),
+      };
+      if (i.meatPoint) customizations.meatPoint = i.meatPoint;
+      return {
+        externalProductId: String(i.id),
+        quantity: i.qty,
+        customizations,
+      };
+    }),
   };
 }
 

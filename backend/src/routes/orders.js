@@ -59,6 +59,15 @@ function generatePublicCode() {
   return `MF-${suffix}`;
 }
 
+function sanitizeCustomizations(customizations, customizationConfig) {
+  if (!customizations || typeof customizations !== 'object') return customizations ?? null;
+  if (customizationConfig?.supportsMeatDoneness === false && 'meatPoint' in customizations) {
+    const { meatPoint, ...rest } = customizations;
+    return rest;
+  }
+  return customizations;
+}
+
 function extraPriceMap(customizationConfig) {
   const map = new Map();
   const extras = customizationConfig?.extras;
@@ -113,7 +122,7 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
         productName: product.name,
         unitPriceCents,
         quantity: item.quantity,
-        customizations: item.customizations ?? null,
+        customizations: sanitizeCustomizations(item.customizations, product.customizationConfig),
         lineTotalCents,
       });
     }

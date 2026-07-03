@@ -52,6 +52,11 @@
         </div>
       </header>
 
+      <div class="alert-banner" id="newOrdersAlert" role="status" hidden>
+        <span class="alert-banner__dot" aria-hidden="true"></span>
+        <span>Há novos pedidos aguardando confirmação.</span>
+      </div>
+
       <div class="summary">
         <div class="summary__card summary__card--novos"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Novos</span></div>
         <div class="summary__card summary__card--preparo"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Em preparo</span></div>
@@ -72,7 +77,8 @@
           <option value="CONFIRMED">Confirmado</option>
           <option value="PREPARING">Em preparo</option>
           <option value="READY">Pronto</option>
-          <option value="DELIVERED">Finalizado</option>
+          <option value="OUT_FOR_DELIVERY">Saiu para entrega</option>
+          <option value="FINALIZED">Finalizado</option>
           <option value="CANCELED">Cancelado</option>
         </select>
       </div>

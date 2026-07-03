@@ -12,7 +12,8 @@ enum OrderStatus {
   CONFIRMED
   PREPARING
   READY
-  DELIVERED
+  OUT_FOR_DELIVERY
+  FINALIZED
   CANCELED
 }
 
@@ -95,6 +96,7 @@ model Order {
   customerPhone   String?
   address         String?
   changeForCents  Int?
+  etaMinutes      Int?
   notes           String?
   subtotalCents   Int             @default(0)
   deliveryFeeCents Int            @default(0)
@@ -111,10 +113,12 @@ model Order {
 }
 
 model OrderStatusHistory {
-  id        String      @id @default(cuid())
-  orderId   String
-  status    OrderStatus
-  createdAt DateTime    @default(now())
+  id         String      @id @default(cuid())
+  orderId    String
+  status     OrderStatus
+  note       String?
+  etaMinutes Int?
+  createdAt  DateTime    @default(now())
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 

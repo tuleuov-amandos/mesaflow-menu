@@ -1,32 +1,45 @@
-export const ORDER_STATUSES = ['NEW', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERED', 'CANCELED'];
+export const ORDER_STATUSES = [
+  'NEW',
+  'CONFIRMED',
+  'PREPARING',
+  'READY',
+  'OUT_FOR_DELIVERY',
+  'FINALIZED',
+  'CANCELED',
+];
 
 export const STATUS_LABELS = {
   NEW: 'Novo',
   CONFIRMED: 'Confirmado',
   PREPARING: 'Em preparo',
   READY: 'Pronto',
-  DELIVERED: 'Finalizado',
+  OUT_FOR_DELIVERY: 'Saiu para entrega',
+  FINALIZED: 'Finalizado',
   CANCELED: 'Cancelado',
-};
-
-const ALLOWED_TRANSITIONS = {
-  NEW: ['CONFIRMED', 'CANCELED'],
-  CONFIRMED: ['PREPARING', 'CANCELED'],
-  PREPARING: ['READY', 'CANCELED'],
-  READY: ['DELIVERED', 'CANCELED'],
-  DELIVERED: [],
-  CANCELED: [],
 };
 
 export function isValidStatus(status) {
   return ORDER_STATUSES.includes(status);
 }
 
-export function canTransition(from, to) {
-  if (!isValidStatus(from) || !isValidStatus(to)) return false;
-  return ALLOWED_TRANSITIONS[from].includes(to);
+export function nextStatuses(from, fulfillmentType) {
+  switch (from) {
+    case 'NEW':
+      return ['CONFIRMED', 'CANCELED'];
+    case 'CONFIRMED':
+      return ['PREPARING', 'CANCELED'];
+    case 'PREPARING':
+      return ['READY', 'CANCELED'];
+    case 'READY':
+      return fulfillmentType === 'DELIVERY' ? ['OUT_FOR_DELIVERY'] : ['FINALIZED'];
+    case 'OUT_FOR_DELIVERY':
+      return ['FINALIZED'];
+    default:
+      return [];
+  }
 }
 
-export function nextStatuses(from) {
-  return ALLOWED_TRANSITIONS[from] ?? [];
+export function canTransition(from, to, fulfillmentType) {
+  if (!isValidStatus(from) || !isValidStatus(to)) return false;
+  return nextStatuses(from, fulfillmentType).includes(to);
 }

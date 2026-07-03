@@ -117,7 +117,7 @@ function buildFormHTML(product) {
     `);
   }
 
-  if (c.meatPoints?.length) {
+  if (c.supportsMeatDoneness !== false && c.meatPoints?.length) {
     parts.push(`
       <div class="customize-group">
         <div class="customize-group__title">Ponto da carne</div>

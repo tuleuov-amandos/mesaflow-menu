@@ -1,7 +1,21 @@
 import { getCart, saveCart, clearCartStorage } from './storage.js';
 import { PRODUCTS } from './data.js';
 
-let items = getCart();
+function sanitizeStoredItems(stored) {
+  let changed = false;
+  const cleaned = stored.map((item) => {
+    const product = PRODUCTS.find((p) => p.id === item.id);
+    if (item.meatPoint && product?.customizations?.supportsMeatDoneness === false) {
+      changed = true;
+      return { ...item, meatPoint: null };
+    }
+    return item;
+  });
+  if (changed) saveCart(cleaned);
+  return cleaned;
+}
+
+let items = sanitizeStoredItems(getCart());
 
 function syncedProducts() {
   return items.filter(item => PRODUCTS.find(p => p.id === item.id));
