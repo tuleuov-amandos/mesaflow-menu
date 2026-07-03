@@ -24,21 +24,32 @@
 
     <section id="panelView" class="panel" hidden>
       <header class="panel__top">
-        <div>
-          <h1 class="panel__title">Pedidos</h1>
-          <p class="panel__hint" id="lastUpdate"></p>
+        <div class="panel__heading">
+          <p class="panel__eyebrow">Painel de pedidos</p>
+          <h1 class="panel__title">Beco da Chapa</h1>
+          <p class="panel__support">Acompanhe novos pedidos e atualize o preparo.</p>
         </div>
-        <button class="btn btn--ghost" type="button" id="logoutBtn">Sair</button>
+        <div class="panel__actions">
+          <button class="btn btn--ghost" type="button" id="logoutBtn">Sair</button>
+          <p class="panel__update" id="lastUpdate"></p>
+          <p class="panel__signature">Tecnologia <span>MesaFlow</span></p>
+        </div>
       </header>
 
       <div class="summary">
-        <div class="summary__card"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Novos</span></div>
-        <div class="summary__card"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Em preparo</span></div>
-        <div class="summary__card"><span class="summary__num" id="cardFinalizados">0</span><span class="summary__lbl">Finalizados</span></div>
+        <div class="summary__card summary__card--novos"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Novos</span></div>
+        <div class="summary__card summary__card--preparo"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Em preparo</span></div>
+        <div class="summary__card summary__card--finalizados"><span class="summary__num" id="cardFinalizados">0</span><span class="summary__lbl">Finalizados</span></div>
       </div>
 
       <div class="filters">
-        <input class="filters__search" type="search" id="searchInput" placeholder="Buscar por código, nome ou telefone" />
+        <div class="filters__field">
+          <svg class="filters__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" />
+            <path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <input class="filters__search" type="search" id="searchInput" placeholder="Buscar por código, nome ou telefone" />
+        </div>
         <select class="filters__status" id="statusFilter">
           <option value="">Todos os status</option>
           <option value="NEW">Novo</option>
@@ -50,7 +61,16 @@
         </select>
       </div>
 
-      <p class="panel__empty" id="ordersEmpty" hidden>Nenhum pedido encontrado.</p>
+      <div class="empty" id="ordersEmpty" hidden>
+        <span class="empty__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="3" width="16" height="18" rx="2.5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+          </svg>
+        </span>
+        <h2 class="empty__title">Nenhum pedido encontrado</h2>
+        <p class="empty__text">Novos pedidos aparecerão aqui assim que forem recebidos.</p>
+      </div>
       <ul class="orders" id="ordersList"></ul>
     </section>
 
