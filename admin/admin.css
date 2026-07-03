@@ -231,11 +231,25 @@ body {
 .action-form__error { color: #fca5a5; font-size: var(--text-sm); }
 .action-form__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 
-/* Comunicação assistida */
+/* Comunicação assistida (seção persistente) */
 .comms { display: flex; flex-direction: column; gap: var(--space-3); background: var(--admin-inset); border: 1px solid var(--admin-line); border-radius: var(--radius-md); padding: var(--space-4); }
-.comms__feedback { font-size: var(--text-sm); color: #a6e8c4; font-weight: var(--weight-medium); }
-.comms__preview { font-size: var(--text-sm); color: var(--admin-ink-2); line-height: 1.5; white-space: pre-wrap; }
+.comms__hint { font-size: var(--text-sm); color: var(--admin-ink-3); }
+.comms__preview { font-size: var(--text-sm); color: var(--admin-ink); line-height: 1.5; white-space: pre-wrap; background: var(--admin-surface); border: 1px solid var(--admin-line); border-radius: var(--radius-sm); padding: var(--space-3); }
 .comms__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+.detail__pubcode { font-size: var(--text-xs); color: var(--admin-ink-3); margin-top: calc(var(--space-4) * -1 + 2px); letter-spacing: 0.02em; }
+.detail__pubcode + .detail__when { margin-top: 0; }
+
+/* Toast curto de status */
+.admin-toast {
+  position: fixed; left: 50%; bottom: var(--space-6); transform: translate(-50%, 12px);
+  background: var(--admin-surface-hi); border: 1px solid var(--admin-line-strong);
+  color: var(--admin-ink); font-size: var(--text-sm); font-weight: var(--weight-semibold);
+  padding: var(--space-3) var(--space-5); border-radius: var(--radius-full);
+  box-shadow: var(--admin-shadow); z-index: var(--z-toast);
+  opacity: 0; pointer-events: none; transition: opacity var(--transition-base), transform var(--transition-base);
+}
+.admin-toast--visible { opacity: 1; transform: translate(-50%, 0); }
 
 .timeline__line { display: flex; justify-content: space-between; gap: var(--space-3); }
 .timeline__note { display: block; font-size: var(--text-xs); color: var(--admin-ink-2); margin-top: 2px; }

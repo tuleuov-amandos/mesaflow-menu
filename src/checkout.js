@@ -37,7 +37,7 @@ export function initCheckoutForm(formEl, onSuccess) {
     if (!validate(formEl)) return;
     const data = buildFormData(formEl);
 
-    let orderCode = null;
+    let orderLabel = null;
     if (isApiEnabled()) {
       const originalLabel = submitBtn?.textContent;
       if (submitBtn) {
@@ -46,7 +46,8 @@ export function initCheckoutForm(formEl, onSuccess) {
       }
       try {
         const result = await createOrder(buildOrderPayload(data));
-        orderCode = result.order?.publicCode ?? null;
+        const number = result.order?.orderNumber;
+        orderLabel = number != null ? `#${number}` : result.order?.publicCode ?? null;
       } catch (err) {
         console.warn('Pedido não persistido, seguindo apenas pelo WhatsApp:', err);
       } finally {
@@ -57,10 +58,10 @@ export function initCheckoutForm(formEl, onSuccess) {
       }
     }
 
-    const message = buildWhatsAppMessage(data, orderCode);
+    const message = buildWhatsAppMessage(data, orderLabel);
     sendToWhatsApp(message);
     resetForm();
-    onSuccess();
+    onSuccess(orderLabel);
   });
 }
 
@@ -196,7 +197,7 @@ function buildOrderPayload(data) {
   };
 }
 
-function buildWhatsAppMessage(data, orderCode = null) {
+function buildWhatsAppMessage(data, orderLabel = null) {
   const items = getItems();
   const subtotal = getSubtotal();
   const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
@@ -222,7 +223,7 @@ function buildWhatsAppMessage(data, orderCode = null) {
 
   const lines = [
     `🔥 *${STORE.name} — Novo Pedido*`,
-    orderCode ? `🧾 *Pedido:* ${orderCode}` : null,
+    orderLabel ? `🧾 *Pedido:* ${orderLabel}` : null,
     ``,
     `👤 *Cliente:* ${data.name}`,
     `📱 *WhatsApp:* ${data.phone}`,

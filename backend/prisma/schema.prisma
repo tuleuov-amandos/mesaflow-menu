@@ -36,6 +36,7 @@ model Restaurant {
   whatsapp         String?
   deliveryFeeCents Int      @default(0)
   minimumOrderCents Int     @default(0)
+  nextOrderNumber  Int      @default(1001)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -89,6 +90,7 @@ model Order {
   id              String          @id @default(cuid())
   restaurantId    String
   publicCode      String          @unique
+  orderNumber     Int
   status          OrderStatus     @default(NEW)
   fulfillmentType FulfillmentType @default(DELIVERY)
   paymentMethod   PaymentMethod   @default(PIX)
@@ -108,6 +110,7 @@ model Order {
   items      OrderItem[]
   history    OrderStatusHistory[]
 
+  @@unique([restaurantId, orderNumber])
   @@index([restaurantId])
   @@index([status])
 }

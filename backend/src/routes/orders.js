@@ -142,23 +142,32 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
     let order = null;
     for (let attempt = 0; attempt < 5 && !order; attempt += 1) {
       try {
-        order = await prisma.order.create({
-          data: {
-            restaurantId: restaurant.id,
-            publicCode: generatePublicCode(),
-            fulfillmentType: payload.fulfillment,
-            paymentMethod: payload.payment.method,
-            customerName: payload.customer.name,
-            customerPhone: payload.customer.phone,
-            address: payload.fulfillment === 'DELIVERY' ? payload.address?.text ?? null : null,
-            changeForCents: payload.payment.method === 'CASH' ? payload.payment.changeForCents ?? null : null,
-            notes: payload.notes ?? null,
-            subtotalCents,
-            deliveryFeeCents,
-            totalCents,
-            items: { create: itemsData },
-            history: { create: { status: 'NEW' } },
-          },
+        order = await prisma.$transaction(async (tx) => {
+          const reserved = await tx.restaurant.update({
+            where: { id: restaurant.id },
+            data: { nextOrderNumber: { increment: 1 } },
+            select: { nextOrderNumber: true },
+          });
+          const orderNumber = reserved.nextOrderNumber - 1;
+          return tx.order.create({
+            data: {
+              restaurantId: restaurant.id,
+              publicCode: generatePublicCode(),
+              orderNumber,
+              fulfillmentType: payload.fulfillment,
+              paymentMethod: payload.payment.method,
+              customerName: payload.customer.name,
+              customerPhone: payload.customer.phone,
+              address: payload.fulfillment === 'DELIVERY' ? payload.address?.text ?? null : null,
+              changeForCents: payload.payment.method === 'CASH' ? payload.payment.changeForCents ?? null : null,
+              notes: payload.notes ?? null,
+              subtotalCents,
+              deliveryFeeCents,
+              totalCents,
+              items: { create: itemsData },
+              history: { create: { status: 'NEW' } },
+            },
+          });
         });
       } catch (error) {
         if (error?.code === 'P2002') continue;
@@ -172,6 +181,7 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
 
     res.status(201).json({
       order: {
+        orderNumber: order.orderNumber,
         publicCode: order.publicCode,
         status: order.status,
         totalCents: order.totalCents,

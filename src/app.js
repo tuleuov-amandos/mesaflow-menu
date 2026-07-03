@@ -250,10 +250,11 @@ function init() {
     refreshProducts();
   });
 
-  initCheckoutForm(checkoutFormEl, () => {
+  initCheckoutForm(checkoutFormEl, (orderLabel) => {
     closeModal(modalEl, modalOverlay);
     clearCart();
-    showToast(toastContainer, '🎉 Pedido enviado no WhatsApp!', 'success');
+    const label = orderLabel ? ` Pedido ${orderLabel}` : '';
+    showToast(toastContainer, `🎉 Pedido enviado no WhatsApp!${label}`, 'success');
   });
 
   initRotatingBanner();

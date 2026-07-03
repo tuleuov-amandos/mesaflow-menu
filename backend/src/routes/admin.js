@@ -57,6 +57,7 @@ router.post('/login', rateLimitLogin, (req, res) => {
 function serializeSummaryOrder(order) {
   return {
     id: order.id,
+    orderNumber: order.orderNumber,
     publicCode: order.publicCode,
     status: order.status,
     statusLabel: STATUS_LABELS[order.status] ?? order.status,
@@ -79,11 +80,16 @@ router.get('/orders', requireAdmin, async (req, res, next) => {
     const where = {};
     if (statusFilter) where.status = statusFilter;
     if (q) {
-      where.OR = [
+      const or = [
         { publicCode: { contains: q, mode: 'insensitive' } },
         { customerName: { contains: q, mode: 'insensitive' } },
         { customerPhone: { contains: q, mode: 'insensitive' } },
       ];
+      const numeric = q.replace(/^#/, '');
+      if (/^\d+$/.test(numeric) && Number(numeric) <= 2147483647) {
+        or.push({ orderNumber: Number(numeric) });
+      }
+      where.OR = or;
     }
 
     const [orders, grouped] = await Promise.all([

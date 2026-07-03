@@ -220,7 +220,7 @@ function renderOrders(orders) {
     if (isNew && waited >= NEW_ATTENTION_MINUTES) li.classList.add('order--attention');
 
     const head = el('div', 'order__head');
-    head.appendChild(el('span', 'order__code', order.publicCode));
+    head.appendChild(el('span', 'order__code', `#${order.orderNumber}`));
     head.appendChild(statusBadge(order.status));
     li.appendChild(head);
 
@@ -297,7 +297,7 @@ function lastCancelReason(order) {
 
 function generateStatusMessage(order, status) {
   const name = order.customerName || 'cliente';
-  const code = order.publicCode;
+  const code = `#${order.orderNumber}`;
   const isDelivery = order.fulfillmentType === 'DELIVERY';
   const eta = order.etaMinutes;
   switch (status) {
@@ -344,27 +344,54 @@ async function copyMessage(message, btn) {
   }
 }
 
-function buildComms(order, status) {
-  const message = generateStatusMessage(order, status);
+function buildCommunication(order) {
   const wrap = el('div', 'comms');
-  wrap.appendChild(el('p', 'comms__feedback', 'Status atualizado. Mensagem pronta para enviar ao cliente.'));
+  wrap.appendChild(el('h3', 'detail__section', 'Mensagem para o cliente'));
+
+  if (order.status === 'NEW') {
+    wrap.appendChild(el('p', 'comms__hint', 'Confirme o pedido para preparar uma mensagem ao cliente.'));
+    return wrap;
+  }
+
+  const message = generateStatusMessage(order, order.status);
+  if (!message) {
+    wrap.appendChild(el('p', 'comms__hint', 'Nenhuma mensagem preparada para este status.'));
+    return wrap;
+  }
+
   wrap.appendChild(el('p', 'comms__preview', message));
 
   const actions = el('div', 'comms__actions');
+  const copyBtn = el('button', 'btn btn--ghost', 'Copiar mensagem');
+  copyBtn.type = 'button';
+  copyBtn.addEventListener('click', () => copyMessage(message, copyBtn));
+
   const waLink = document.createElement('a');
   waLink.className = 'btn btn--wa';
   waLink.href = whatsappWithMessage(order.customerPhone, message);
   waLink.target = '_blank';
   waLink.rel = 'noopener';
-  waLink.textContent = 'Abrir mensagem no WhatsApp';
+  waLink.textContent = 'Abrir no WhatsApp';
 
-  const copyBtn = el('button', 'btn btn--ghost', 'Copiar mensagem');
-  copyBtn.type = 'button';
-  copyBtn.addEventListener('click', () => copyMessage(message, copyBtn));
-
-  actions.append(waLink, copyBtn);
+  actions.append(copyBtn, waLink);
   wrap.appendChild(actions);
   return wrap;
+}
+
+let toastTimer = null;
+function showToast(text) {
+  let toast = document.getElementById('adminToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'adminToast';
+    toast.className = 'admin-toast';
+    toast.setAttribute('role', 'status');
+    document.body.appendChild(toast);
+  }
+  toast.textContent = text;
+  toast.classList.add('admin-toast--visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('admin-toast--visible'), 2600);
 }
 
 function renderActions(order, host) {
@@ -471,16 +498,17 @@ function renderCancelForm(order, host) {
   ta.focus();
 }
 
-function renderDetail(order, comms) {
+function renderDetail(order) {
   const c = els.detailContent;
   c.textContent = '';
 
   const header = el('div', 'detail__header');
-  const code = el('h2', 'detail__code', order.publicCode);
+  const code = el('h2', 'detail__code', `Pedido #${order.orderNumber}`);
   code.id = 'detailCode';
   header.appendChild(code);
   header.appendChild(statusBadge(order.status));
   c.appendChild(header);
+  c.appendChild(el('p', 'detail__pubcode', `Ref. ${order.publicCode}`));
 
   c.appendChild(el('p', 'detail__when', formatDateTime(order.createdAt)));
 
@@ -533,9 +561,7 @@ function renderDetail(order, comms) {
   renderActions(order, actionsHost);
   c.appendChild(actionsHost);
 
-  if (comms && comms.status && comms.status !== 'NEW') {
-    c.appendChild(buildComms(order, comms.status));
-  }
+  c.appendChild(buildCommunication(order));
 
   const timeline = el('div', 'detail__timeline');
   timeline.appendChild(el('h3', 'detail__section', 'Histórico'));
@@ -588,7 +614,10 @@ async function applyStatus(order, status, extra = {}) {
     });
     const fresh = await fetchDetail(order.id);
     currentDetailId = order.id;
-    renderDetail(fresh, { status });
+    renderDetail(fresh);
+    showToast('Status atualizado');
+    const commsSection = els.detailContent.querySelector('.comms');
+    if (commsSection) commsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     await loadOrders();
   } catch (err) {
     if (err.message !== 'unauthorized') alert(err.message);
