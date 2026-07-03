@@ -1,137 +1,143 @@
-# MesaFlow Menu
+# MesaFlow — Sistema de pedidos diretos para restaurantes
 
-Cardápio digital com pedidos pelo WhatsApp para pequenos negócios de alimentação.
-O cliente entra, escolhe, personaliza, adiciona ao carrinho e finaliza o pedido
-direto no WhatsApp — sem cadastro, sem login e sem aplicativo.
+Site, cardápio, checkout, pedidos persistidos e painel operacional para o restaurante
+receber pedidos pelo **próprio canal** — sem comissão de marketplace nos pedidos feitos
+pelo próprio canal. O cliente escolhe, personaliza e finaliza; o pedido é registrado em
+banco e acompanhado por um painel administrativo com fluxo guiado e comunicação assistida
+por WhatsApp.
 
-**Demo:** **Beco da Chapa** — hamburgueria artesanal.
-
-> Beco da Chapa é uma marca fictícia criada para demonstração do MesaFlow Menu.
-> Dados de contato, endereço, redes sociais e número de WhatsApp são fictícios.
-
-**Produção:** https://mesaflow-menu.vercel.app
+**Demo:** **Beco da Chapa** — hamburgueria artesanal (marca fictícia para demonstração;
+contatos, endereço e telefones são fictícios).
 
 ---
 
-## Tecnologias
+## Links
 
-- HTML5 semântico
-- CSS3 com custom properties (design tokens)
-- JavaScript puro com ES Modules nativos
-- localStorage para persistência de carrinho e favoritos
-- Web Share API para compartilhamento
-
-Sem frameworks. Sem dependências. Sem build step. Imagens locais (`assets/images/`).
+- **Demo pública:** https://mesaflow-menu.vercel.app
+- **Painel administrativo:** https://mesaflow-menu.vercel.app/admin (acesso por senha; a senha não é pública)
+- **Repositório:** https://github.com/RhanielRodri/mesaflow-menu
 
 ---
 
-## Principais funcionalidades
+## Galeria
 
-- Hero com foto real, avaliação e status "Aberto agora / Fechado" calculado pelo horário
-- Banner rotativo de promoções (dispensável) e skeleton loading no carregamento
-- Filtro por categoria, busca em tempo real (com normalização de acentos) e favoritos
-- Cards com foto real e fallback neutro em gradiente (sem emoji sobre a imagem)
-- Painel compacto de personalização de hambúrgueres (remover ingredientes, adicionais
-  com preço, ponto da carne) e escolha obrigatória de bebida nos combos
-- Carrinho lateral com quantidades, linhas de customização, total e frete grátis progressivo
-- Checkout com Delivery/Retirada, endereço condicional, pagamento e troco condicional
-- Seção "Sobre" com galeria, avaliações de clientes e rodapé com QR Code do cardápio
-- Layout responsivo: no mobile os produtos ficam em coluna única com imagens grandes
+| | |
+|---|---|
+| ![Home](docs/screenshots/home-desktop.png) | ![Cardápio](docs/screenshots/menu-desktop.png) |
+| ![Login do painel](docs/screenshots/admin-login-desktop.png) | ![Painel de pedidos](docs/screenshots/admin-dashboard-desktop.png) |
+| ![Detalhe do pedido](docs/screenshots/admin-order-detail-desktop.png) | |
+
+| Mobile — cardápio | Mobile — painel |
+|---|---|
+| ![Cardápio mobile](docs/screenshots/menu-mobile.png) | ![Painel mobile](docs/screenshots/admin-mobile.png) |
+
+---
+
+## Funcionalidades para o cliente
+
+- Cardápio por categorias
+- Busca em tempo real (com normalização de acentos) e favoritos
+- Carrinho com quantidades, linhas de personalização, total e frete grátis progressivo
+- Personalização por produto (remover ingredientes, adicionais com preço e ponto da carne
+  apenas nos produtos compatíveis)
+- Retirada ou entrega, com endereço condicional
+- Pagamento por Pix, cartão ou dinheiro, com troco condicional
+- Número humano do pedido (ex.: **#1042**) na confirmação e na mensagem
+- WhatsApp complementar: o checkout monta uma mensagem formatada com o resumo do pedido
+
+---
+
+## Funcionalidades operacionais (painel `/admin`)
+
+- Painel protegido por senha (JWT de sessão curta)
+- Fila de pedidos ordenada, com cards de resumo (Novos / Em preparo / Finalizados)
+- Alerta discreto de novos pedidos e tempo de espera dos pedidos aguardando confirmação
+- Previsão de preparo ao confirmar (em minutos)
+- Fluxo guiado por tipo de entrega:
+  - **Retirada:** Novo → Confirmado → Em preparo → Pronto → Finalizado
+  - **Entrega:** Novo → Confirmado → Em preparo → Pronto → Saiu para entrega → Finalizado
+- Histórico de status append-only, com previsão e motivo quando aplicável
+- Cancelamento com motivo obrigatório, registrado na timeline
+- Comunicação assistida: mensagem por status pronta para **copiar** ou **abrir no WhatsApp**
+  (o envio é sempre manual — o sistema nunca envia nem afirma que o cliente foi avisado)
+- Busca por número, `#número`, nome, telefone ou código técnico
+- Layout responsivo (desktop e mobile)
 
 ---
 
 ## Fluxo
 
 ```
-site → cardápio → carrinho → checkout → WhatsApp
+Cliente → cardápio → checkout → API → PostgreSQL → painel → WhatsApp assistido
 ```
 
-O checkout monta uma mensagem formatada (itens, quantidades, customizações, bebida,
-entrega/retirada, pagamento, observações e total) e abre o WhatsApp da loja.
+```mermaid
+flowchart LR
+  A[Cliente] --> B[Cardapio]
+  B --> C[Checkout]
+  C --> D[API Express]
+  D --> E[(PostgreSQL / Neon)]
+  E --> F[Painel admin]
+  F --> G[WhatsApp assistido]
+```
+
+O número humano do pedido é gerado de forma atômica por restaurante no momento da criação;
+o código técnico `MF-XXXXXX` continua salvo como referência interna.
 
 ---
 
-## Estrutura de pastas
+## Arquitetura
+
+- **Frontend estático:** HTML, CSS e JavaScript modular (ES Modules nativos), sem framework
+  e sem build — publicado na **Vercel**.
+- **Backend:** Node.js + Express + Prisma 6, hospedado no **Render**.
+- **Banco:** PostgreSQL no **Neon** (valores monetários sempre em centavos inteiros).
+- **Modelos:** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem`, `OrderStatusHistory`.
+
+---
+
+## Segurança
+
+- Rotas administrativas protegidas por **JWT** de expiração curta e rate limit no login.
+- Segredos apenas em variáveis de ambiente (nunca versionados).
+- A demo usa exclusivamente dados fictícios.
+- A senha do painel **não** consta neste repositório nem no README.
+
+---
+
+## Estrutura do repositório
 
 ```
 CardapioPro/
-├── index.html
-├── src/
-│   ├── config.js     URL pública da demo (SITE_URL) — fonte única
-│   ├── app.js        bootstrap, eventos, banner rotativo, status da loja
-│   ├── data.js       loja, cardápio, avaliações, banners (fonte única de dados)
-│   ├── cart.js       estado do carrinho (itens simples e customizados)
-│   ├── customize.js  painel de personalização
-│   ├── checkout.js   formulário e geração da mensagem do WhatsApp
-│   ├── filters.js    filtragem por categoria e busca
-│   ├── search.js     debounce do campo de busca
-│   ├── storage.js    wrapper de localStorage (com migração de chaves antigas)
-│   └── ui.js         renderização (cards, skeleton, carrinho, avaliações, share)
-├── styles/           reset, variables, layout, components, pages
-└── assets/images/    hero, sobre, QR e produtos (fotos locais)
+├── index.html            site público (cardápio + checkout)
+├── admin/                painel operacional (login, fila, detalhe, comunicação)
+├── src/                  módulos do frontend (data, cart, customize, checkout, ui, api…)
+├── styles/               design tokens e estilos
+├── assets/               imagens, favicon
+├── backend/              API Express + Prisma
+│   ├── src/              app, rotas (health, public menu, orders, admin), middlewares
+│   └── prisma/           schema, migrations e seed idempotente
+├── docs/screenshots/     capturas usadas na galeria
+└── render.yaml           blueprint de deploy da API no Render
 ```
 
 ---
 
 ## Como rodar localmente
 
-ES Modules exigem um servidor HTTP (não funciona via `file://`).
+**Frontend** (ES Modules exigem servidor HTTP):
 
 ```bash
-npx serve .            # dentro de CardapioPro/  (ou: npx serve produtos/CardapioPro)
-# alternativas: VS Code Live Server, ou  python -m http.server 3000
+npx serve .            # dentro de produtos/CardapioPro
 ```
 
-Acesse a URL exibida no terminal.
+Em ambiente local o frontend aponta automaticamente para a API em `http://localhost:3333`.
 
----
-
-## Configuração
-
-- **URL pública:** `src/config.js` → `SITE_URL`. Ao trocar de domínio, atualize esse
-  valor, espelhe em `<link rel="canonical">` / `<meta property="og:url">` no `index.html`
-  e regenere o QR local (`assets/images/qr-code.png`) para o mesmo endereço.
-- **WhatsApp de pedidos:** `src/data.js` → `STORE.whatsapp` (DDI+DDD+número).
-- **Cardápio:** array `PRODUCTS` em `src/data.js`; fotos em `assets/images/products/`.
-
-Regenerar o QR (exemplo, ajuste a URL):
-
-```bash
-curl -s -o assets/images/qr-code.png \
-  "https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Fmesaflow-menu.vercel.app"
-```
-
----
-
-## Screenshots
-
-Capturas em `prints/` (ver `prints/README.md` para a lista e os nomes esperados).
-
----
-
-## Backend em evolução
-
-A interface pública atual continua funcionando como **frontend estático** (HTML/CSS/JS
-na raiz) e é ela que está publicada em produção. Em paralelo, o `backend/` inicia a
-fundação de um backend real, preparando o MesaFlow para pedidos persistidos e painel
-operacional nas próximas etapas.
-
-**Stack:** Node.js + Express + Prisma + PostgreSQL (ES Modules).
-
-**Modelos:** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem` (valores monetários
-sempre em centavos, como inteiros).
-
-**Endpoints disponíveis nesta etapa:**
-
-- `GET /api/health` → `{ "status": "ok" }`
-- `GET /api/public/restaurants/beco-da-chapa/menu` → cardápio público (restaurante,
-  categorias e produtos ativos)
-
-O seed reutiliza `src/data.js` como fonte única (sem duplicar o cardápio) e é idempotente.
+**Backend** (API + banco):
 
 ```bash
 cd backend
-cp .env.example .env          # aponte DATABASE_URL para um PostgreSQL local
+cp .env.example .env          # preencha as variáveis (ver abaixo)
 npm install
 npm run prisma:generate
 npm run prisma:migrate
@@ -139,23 +145,35 @@ npm run seed
 npm run dev                   # sobe a API em http://localhost:3333
 ```
 
-> Nesta etapa o frontend **ainda não** consome a API. A próxima etapa conectará o
-> checkout ao backend para registrar pedidos.
+O seed reutiliza `src/data.js` como fonte única do cardápio e é idempotente.
 
 ---
 
-## Roadmap — ecossistema MesaFlow
+## Variáveis de ambiente
 
-- **MesaFlow Menu** — concluído
-- MesaFlow Mesa
-- MesaFlow Comanda
-- MesaFlow Kitchen
-- MesaFlow Caixa
-- MesaFlow Estoque
-- MesaFlow Financeiro
+Apenas os nomes (defina os valores no seu ambiente / painel de deploy):
+
+```
+DATABASE_URL
+ADMIN_PASSWORD
+ADMIN_JWT_SECRET
+FRONTEND_URL
+PORT
+```
 
 ---
 
-## Licença
+## Escopo
 
-MIT — livre para uso pessoal e comercial.
+MesaFlow é um **canal próprio de pedidos** para o restaurante. Não é um substituto direto
+do iFood: a proposta é dar ao restaurante um canal onde ele recebe pedidos **sem comissão
+de marketplace nos pedidos feitos pelo próprio canal**, com painel operacional próprio.
+
+### Fora do escopo atual
+
+Estoque, financeiro, PDV, QR por mesa, WhatsApp API oficial, tela de cozinha, múltiplos
+usuários e multiempresa.
+
+---
+
+Projeto de portfólio e base reutilizável para restaurantes.
