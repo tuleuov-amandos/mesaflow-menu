@@ -12,14 +12,30 @@
 <body>
   <main class="admin">
     <section id="loginView" class="login" hidden>
-      <form id="loginForm" class="login__card" autocomplete="off">
-        <h1 class="login__title">MesaFlow</h1>
-        <p class="login__subtitle">Painel de Pedidos</p>
-        <label class="login__label" for="password">Senha de acesso</label>
-        <input class="login__input" type="password" id="password" name="password" required />
-        <button class="btn btn--primary" type="submit" id="loginBtn">Entrar</button>
-        <p class="login__error" id="loginError" role="alert" hidden></p>
-      </form>
+      <div class="login__shell">
+        <aside class="login__brand">
+          <span class="login__brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 9.5C4 6.46 7.58 4 12 4s8 2.46 8 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <rect x="3" y="9.5" width="18" height="3.2" rx="1.6" stroke="currentColor" stroke-width="1.6" />
+              <path d="M5.5 12.7 6.8 19a2 2 0 0 0 2 1.6h6.4a2 2 0 0 0 2-1.6l1.3-6.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <p class="login__brand-eyebrow">Painel de pedidos</p>
+          <h1 class="login__brand-name">Beco da Chapa</h1>
+          <p class="login__brand-text">Acompanhe pedidos, atualize o preparo e organize a operação em um só lugar.</p>
+          <p class="login__brand-sign">Tecnologia <span>MesaFlow</span></p>
+        </aside>
+
+        <form id="loginForm" class="login__card" autocomplete="off">
+          <h2 class="login__card-title">Acesso administrativo</h2>
+          <p class="login__card-text">Entre para acompanhar os pedidos do restaurante.</p>
+          <label class="login__label" for="password">Senha de acesso</label>
+          <input class="login__input" type="password" id="password" name="password" required />
+          <button class="btn btn--primary" type="submit" id="loginBtn">Entrar</button>
+          <p class="login__error" id="loginError" role="alert" hidden></p>
+        </form>
+      </div>
     </section>
 
     <section id="panelView" class="panel" hidden>
