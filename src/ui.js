@@ -32,9 +32,6 @@ export function renderProductCard(product) {
   const badgeHTML = product.badge
     ? `<span class="badge badge--${product.badgeType}">${product.badge}</span>`
     : '';
-  const prepHTML = product.prepTime
-    ? `<div class="product-card__prep"><span aria-hidden="true">⏱</span> ${product.prepTime}</div>`
-    : '';
   const hasOptions = !!(product.customizations || product.drinkOptions);
 
   return `
@@ -56,7 +53,6 @@ export function renderProductCard(product) {
       <div class="product-card__body">
         <h3 class="product-card__name">${product.name}</h3>
         <p class="product-card__desc">${product.description}</p>
-        ${prepHTML}
         <div class="product-card__footer">
           <span class="product-card__price">${formatPrice(product.price)}${hasOptions ? '<span class="product-card__price-from">a partir de</span>' : ''}</span>
           <button
