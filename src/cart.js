@@ -5,9 +5,9 @@ function sanitizeStoredItems(stored) {
   let changed = false;
   const cleaned = stored.map((item) => {
     const product = PRODUCTS.find((p) => p.id === item.id);
-    if (item.meatPoint && product?.customizations?.supportsMeatDoneness === false) {
+    if (item.size && product?.customizations?.supportsSize === false) {
       changed = true;
-      return { ...item, meatPoint: null };
+      return { ...item, size: null };
     }
     return item;
   });
@@ -51,7 +51,7 @@ export function addItemWithCustomizations(product, result) {
     qty: 1,
     removes: result.removes || [],
     extras: result.extras?.map(e => e.label) || [],
-    meatPoint: result.meatPoint || null,
+    size: result.size || null,
     drinkChoice: result.drinkChoice || null,
   });
   persist();

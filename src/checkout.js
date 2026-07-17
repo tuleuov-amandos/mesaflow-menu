@@ -42,14 +42,14 @@ export function initCheckoutForm(formEl, onSuccess) {
       const originalLabel = submitBtn?.textContent;
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Enviando pedido...';
+        submitBtn.textContent = 'Отправляем заказ...';
       }
       try {
         const result = await createOrder(buildOrderPayload(data));
         const number = result.order?.orderNumber;
         orderLabel = number != null ? `#${number}` : result.order?.publicCode ?? null;
       } catch (err) {
-        console.warn('Pedido não persistido, seguindo apenas pelo WhatsApp:', err);
+        console.warn('Заказ не сохранён, продолжаем только через WhatsApp:', err);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -68,18 +68,18 @@ export function initCheckoutForm(formEl, onSuccess) {
 export function renderCheckoutSummary(containerEl) {
   const items = getItems();
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
+  const deliveryFee = subtotal >= STORE.freeDeliveryAbove ? 0 : STORE.deliveryFee;
   const total = subtotal + deliveryFee;
 
   containerEl.innerHTML = `
     <div class="checkout-summary">
-      <div class="checkout-summary__title">Resumo do pedido</div>
+      <div class="checkout-summary__title">Ваш заказ</div>
       ${items.map(i => {
         const customLines = [];
         if (i.removes?.length) customLines.push(...i.removes);
         if (i.extras?.length) customLines.push(...i.extras.map(e => `+${e}`));
-        if (i.meatPoint) customLines.push(`Ponto: ${i.meatPoint}`);
-        if (i.drinkChoice) customLines.push(`Bebida: ${i.drinkChoice}`);
+        if (i.size) customLines.push(`Размер: ${i.size}`);
+        if (i.drinkChoice) customLines.push(`Напиток: ${i.drinkChoice}`);
         return `
           <div class="checkout-summary__item">
             <span>
@@ -91,11 +91,11 @@ export function renderCheckoutSummary(containerEl) {
         `;
       }).join('')}
       <div class="checkout-summary__item">
-        <span>Taxa de entrega</span>
-        <span>${deliveryFee === 0 ? 'Grátis' : formatPrice(deliveryFee)}</span>
+        <span>Доставка</span>
+        <span>${deliveryFee === 0 ? 'Бесплатно' : formatPrice(deliveryFee)}</span>
       </div>
       <div class="checkout-summary__total">
-        <span>Total</span>
+        <span>Итого</span>
         <span>${formatPrice(total)}</span>
       </div>
     </div>
@@ -108,21 +108,21 @@ function validate(formEl) {
   formEl.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
   const required = [
-    { id: 'customerName', message: 'Informe seu nome' },
-    { id: 'customerPhone', message: 'Informe seu WhatsApp' },
+    { id: 'customerName', message: 'Укажите ваше имя' },
+    { id: 'customerPhone', message: 'Укажите ваш WhatsApp' },
   ];
 
   const deliveryType = formEl.querySelector('[name="deliveryType"]:checked');
   if (!deliveryType) {
-    showFieldError(formEl.querySelector('#deliveryTypeGroup'), 'Selecione entrega ou retirada');
+    showFieldError(formEl.querySelector('#deliveryTypeGroup'), 'Выберите доставку или самовывоз');
     valid = false;
   } else if (deliveryType.value === 'delivery') {
-    required.push({ id: 'address', message: 'Informe o endereço de entrega' });
+    required.push({ id: 'address', message: 'Укажите адрес доставки' });
   }
 
   const payment = formEl.querySelector('[name="payment"]:checked');
   if (!payment) {
-    showFieldError(formEl.querySelector('#paymentGroup'), 'Selecione a forma de pagamento');
+    showFieldError(formEl.querySelector('#paymentGroup'), 'Выберите способ оплаты');
     valid = false;
   }
 
@@ -187,7 +187,7 @@ function buildOrderPayload(data) {
         extras: i.extras ?? [],
         drinkChoice: i.drinkChoice ?? null,
       };
-      if (i.meatPoint) customizations.meatPoint = i.meatPoint;
+      if (i.size) customizations.size = i.size;
       return {
         externalProductId: String(i.id),
         quantity: i.qty,
@@ -200,49 +200,49 @@ function buildOrderPayload(data) {
 function buildWhatsAppMessage(data, orderLabel = null) {
   const items = getItems();
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
+  const deliveryFee = subtotal >= STORE.freeDeliveryAbove ? 0 : STORE.deliveryFee;
   const total = subtotal + deliveryFee;
 
   const itemLines = items.map(i => {
     const customLines = [];
     if (i.removes?.length) customLines.push(...i.removes);
     if (i.extras?.length) customLines.push(...i.extras.map(e => `+${e}`));
-    if (i.meatPoint) customLines.push(`Ponto: ${i.meatPoint}`);
-    if (i.drinkChoice) customLines.push(`Bebida: ${i.drinkChoice}`);
+    if (i.size) customLines.push(`Размер: ${i.size}`);
+    if (i.drinkChoice) customLines.push(`Напиток: ${i.drinkChoice}`);
     const customStr = customLines.length ? `\n    ↳ ${customLines.join(', ')}` : '';
     return `• ${i.qty}× ${i.name} — ${formatPrice(i.price * i.qty)}${customStr}`;
   }).join('\n');
 
-  const deliveryLabel = data.deliveryType === 'delivery' ? '🚚 Delivery' : '🏃 Retirada no local';
-  const addressLine = data.deliveryType === 'delivery' ? `📍 *Endereço:* ${data.address}\n` : '';
-  const paymentLabels = { pix: 'Pix', cartao: 'Cartão', dinheiro: 'Dinheiro' };
+  const deliveryLabel = data.deliveryType === 'delivery' ? '🚚 Доставка' : '🏃 Самовывоз';
+  const addressLine = data.deliveryType === 'delivery' ? `📍 *Адрес:* ${data.address}\n` : '';
+  const paymentLabels = { pix: 'Kaspi', cartao: 'Карта', dinheiro: 'Наличные' };
   const paymentLabel = paymentLabels[data.payment] ?? data.payment;
-  const changeLine = data.payment === 'dinheiro' && data.change ? `💵 *Troco para:* R$ ${data.change}\n` : '';
-  const notesLine = data.notes ? `\n📝 *Obs:* ${data.notes}` : '';
-  const feeLine = deliveryFee === 0 ? 'Grátis 🎉' : formatPrice(deliveryFee);
+  const changeLine = data.payment === 'dinheiro' && data.change ? `💵 *Сдача с:* ${data.change} ₽\n` : '';
+  const notesLine = data.notes ? `\n📝 *Комментарий:* ${data.notes}` : '';
+  const feeLine = deliveryFee === 0 ? 'Бесплатно 🎉' : formatPrice(deliveryFee);
 
   const lines = [
-    `🔥 *${STORE.name} — Novo Pedido*`,
-    orderLabel ? `🧾 *Pedido:* ${orderLabel}` : null,
+    `☕ *${STORE.name} — Новый заказ*`,
+    orderLabel ? `🧾 *Заказ:* ${orderLabel}` : null,
     ``,
-    `👤 *Cliente:* ${data.name}`,
+    `👤 *Клиент:* ${data.name}`,
     `📱 *WhatsApp:* ${data.phone}`,
     ``,
-    `📋 *Itens:*`,
+    `📋 *Позиции:*`,
     itemLines,
     ``,
     `---`,
     deliveryLabel,
     addressLine.trim() || null,
     ``,
-    `💳 *Pagamento:* ${paymentLabel}`,
+    `💳 *Оплата:* ${paymentLabel}`,
     changeLine.trim() || null,
     notesLine || null,
     ``,
     `---`,
-    `🛒 *Subtotal:* ${formatPrice(subtotal)}`,
-    `🚚 *Frete:* ${feeLine}`,
-    `✅ *Total: ${formatPrice(total)}*`,
+    `🛒 *Сумма:* ${formatPrice(subtotal)}`,
+    `🚚 *Доставка:* ${feeLine}`,
+    `✅ *Итого: ${formatPrice(total)}*`,
   ].filter(l => l !== null).join('\n');
 
   return lines;

@@ -16,7 +16,7 @@ export function openCustomizationModal(product, onConfirm) {
 
   const updateTotal = () => {
     const { extraTotal } = readFormData(product, bodyEl);
-    confirmBtn.textContent = `Adicionar por ${formatPrice(product.price + extraTotal)}`;
+    confirmBtn.textContent = `Добавить за ${formatPrice(product.price + extraTotal)}`;
   };
 
   const close = () => {
@@ -55,7 +55,7 @@ function buildFormHTML(product) {
       </div>
       <div class="customize-summary__info">
         <div class="customize-summary__name">${product.name}</div>
-        <div class="customize-summary__price">Preço base ${formatPrice(product.price)}</div>
+        <div class="customize-summary__price">Базовая цена ${formatPrice(product.price)}</div>
       </div>
     </div>
   `];
@@ -64,7 +64,7 @@ function buildFormHTML(product) {
     parts.push(`
       <div class="customize-group">
         <div class="customize-group__title">
-          Escolha sua bebida <span class="customize-required">obrigatório</span>
+          Выберите напиток <span class="customize-required">обязательно</span>
         </div>
         <div class="customize-options customize-options--chips">
           ${product.drinkOptions.map((drink, i) => `
@@ -80,12 +80,12 @@ function buildFormHTML(product) {
   }
 
   const c = product.customizations;
-  if (!c) return parts.join('') + '<p class="customize-empty">Nenhuma personalização disponível.</p>';
+  if (!c) return parts.join('') + '<p class="customize-empty">Настройки недоступны.</p>';
 
   if (c.removes?.length) {
     parts.push(`
       <div class="customize-group">
-        <div class="customize-group__title">Remover ingredientes</div>
+        <div class="customize-group__title">Убрать ингредиенты</div>
         <div class="customize-options customize-options--chips">
           ${c.removes.map(r => `
             <label class="customize-chip">
@@ -101,7 +101,7 @@ function buildFormHTML(product) {
   if (c.extras?.length) {
     parts.push(`
       <div class="customize-group">
-        <div class="customize-group__title">Adicionais</div>
+        <div class="customize-group__title">Добавки</div>
         <div class="customize-options">
           ${c.extras.map(e => `
             <label class="customize-check">
@@ -117,15 +117,15 @@ function buildFormHTML(product) {
     `);
   }
 
-  if (c.supportsMeatDoneness !== false && c.meatPoints?.length) {
+  if (c.supportsSize !== false && c.sizeOptions?.length) {
     parts.push(`
       <div class="customize-group">
-        <div class="customize-group__title">Ponto da carne</div>
+        <div class="customize-group__title">Размер стакана</div>
         <div class="customize-options customize-options--chips">
-          ${c.meatPoints.map(mp => `
+          ${c.sizeOptions.map(sz => `
             <label class="customize-radio">
-              <input type="radio" name="meatPoint" value="${mp}" ${mp === (c.defaultMeatPoint ?? c.meatPoints[1]) ? 'checked' : ''}>
-              <span class="customize-radio__label">${mp}</span>
+              <input type="radio" name="size" value="${sz}" ${sz === (c.defaultSize ?? c.sizeOptions[1]) ? 'checked' : ''}>
+              <span class="customize-radio__label">${sz}</span>
             </label>
           `).join('')}
         </div>
@@ -140,7 +140,7 @@ function readFormData(product, formEl) {
   const result = {
     removes: [],
     extras: [],
-    meatPoint: null,
+    size: null,
     drinkChoice: null,
     extraTotal: 0,
   };
@@ -155,8 +155,8 @@ function readFormData(product, formEl) {
     result.extraTotal += price;
   });
 
-  const meatEl = formEl.querySelector('input[name="meatPoint"]:checked');
-  if (meatEl) result.meatPoint = meatEl.value;
+  const sizeEl = formEl.querySelector('input[name="size"]:checked');
+  if (sizeEl) result.size = sizeEl.value;
 
   const drinkEl = formEl.querySelector('input[name="drinkChoice"]:checked');
   if (drinkEl) result.drinkChoice = drinkEl.value;
