@@ -30,12 +30,12 @@ export const STORE = {
 };
 
 export const CATEGORY_META = {
-  coffee:   { emoji: '☕', gradient: 'linear-gradient(135deg, #1a0e00, #2d1a05)' },
-  combos:   { emoji: '🎁', gradient: 'linear-gradient(135deg, #0f0a1a, #1e1232)' },
-  pastry:   { emoji: '🥐', gradient: 'linear-gradient(135deg, #0e0c00, #1e1a05)' },
-  drinks:   { emoji: '🧋', gradient: 'linear-gradient(135deg, #00091a, #05132e)' },
-  desserts: { emoji: '🍰', gradient: 'linear-gradient(135deg, #1a0014, #2d0024)' },
-  syrups:   { emoji: '🍯', gradient: 'linear-gradient(135deg, #0a1200, #152000)' },
+  coffee:   { emoji: '☕', gradient: 'linear-gradient(135deg, #f3e9dd, #e8d7c3)' },
+  combos:   { emoji: '🎁', gradient: 'linear-gradient(135deg, #ece7f6, #dbd0ee)' },
+  pastry:   { emoji: '🥐', gradient: 'linear-gradient(135deg, #f5ecda, #eadfc4)' },
+  drinks:   { emoji: '🧋', gradient: 'linear-gradient(135deg, #e4edf6, #cfe0ef)' },
+  desserts: { emoji: '🍰', gradient: 'linear-gradient(135deg, #f6e6ee, #eed0de)' },
+  syrups:   { emoji: '🍯', gradient: 'linear-gradient(135deg, #e9f0de, #d6e4c2)' },
 };
 
 export const CATEGORIES = [

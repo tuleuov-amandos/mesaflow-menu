@@ -1,25 +1,25 @@
 :root {
-  /* Colors */
-  --clr-bg: #080808;
-  --clr-bg-card: #111111;
-  --clr-bg-elevated: #1a1a1a;
-  --clr-bg-overlay: rgba(0, 0, 0, 0.75);
+  /* Colors — светлая тёплая тема (в духе Drinkit) */
+  --clr-bg: #faf5ef;             /* тёплый кремовый фон */
+  --clr-bg-card: #ffffff;        /* белые карточки */
+  --clr-bg-elevated: #f3ece3;    /* поля ввода, чипы, приподнятые блоки */
+  --clr-bg-overlay: rgba(40, 30, 22, 0.45);
 
-  --clr-accent: #f97316;
-  --clr-accent-dark: #c2610f;
-  --clr-accent-light: rgba(249, 115, 22, 0.12);
-  --clr-accent-border: rgba(249, 115, 22, 0.35);
+  --clr-accent: #fa6423;         /* тёплый энергичный оранжевый */
+  --clr-accent-dark: #e14e12;
+  --clr-accent-light: rgba(250, 100, 35, 0.10);
+  --clr-accent-border: rgba(250, 100, 35, 0.30);
 
-  --clr-text-primary: #f2f2f2;
-  --clr-text-secondary: #a0a0a0;
-  --clr-text-muted: #555555;
+  --clr-text-primary: #211a15;   /* тёплый почти-чёрный (эспрессо) */
+  --clr-text-secondary: #6b6157; /* тёплый серый */
+  --clr-text-muted: #9d9187;     /* светлый тёплый серый */
 
-  --clr-border: #222222;
-  --clr-border-hover: #333333;
+  --clr-border: #ece3d8;         /* мягкая тёплая граница */
+  --clr-border-hover: #dccfc0;
 
-  --clr-success: #22c55e;
-  --clr-error: #ef4444;
-  --clr-info: #3b82f6;
+  --clr-success: #16a34a;
+  --clr-error: #e23d3d;
+  --clr-info: #2563eb;
 
   /* Typography */
   --font-display: 'Outfit', system-ui, -apple-system, sans-serif;
@@ -56,18 +56,18 @@
   --space-20: 5rem;
   --space-24: 6rem;
 
-  /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  /* Border Radius — мягкие крупные скругления */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.7);
-  --shadow-accent: 0 4px 24px rgba(249, 115, 22, 0.3);
+  /* Shadows — мягкие светлые тени */
+  --shadow-sm: 0 1px 2px rgba(40, 30, 22, 0.06), 0 1px 8px rgba(40, 30, 22, 0.04);
+  --shadow-md: 0 6px 20px rgba(40, 30, 22, 0.08);
+  --shadow-lg: 0 16px 48px rgba(40, 30, 22, 0.14);
+  --shadow-accent: 0 8px 24px rgba(250, 100, 35, 0.28);
 
   /* Transitions */
   --transition-fast: 150ms ease;

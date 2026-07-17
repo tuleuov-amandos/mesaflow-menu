@@ -26,7 +26,7 @@ body {
   top: 0;
   z-index: var(--z-header);
   height: var(--header-height);
-  background: rgba(8, 8, 8, 0.92);
+  background: rgba(250, 245, 239, 0.85);
   border-bottom: 1px solid var(--clr-border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
