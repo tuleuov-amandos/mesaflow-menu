@@ -183,13 +183,13 @@
 .hero__image-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--clr-bg) 0%, rgba(250,245,239,0) 55%);
+  background: linear-gradient(90deg, var(--clr-bg) 0%, rgba(244,240,231,0) 55%);
   pointer-events: none;
 }
 
 @media (max-width: 900px) {
   .hero__image-overlay {
-    background: linear-gradient(0deg, var(--clr-bg) 0%, rgba(250,245,239,0) 60%);
+    background: linear-gradient(0deg, var(--clr-bg) 0%, rgba(244,240,231,0) 60%);
   }
 }
 
@@ -597,7 +597,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
-  background: rgba(249, 115, 22, 0.12);
+  background: var(--clr-accent-light);
   color: var(--clr-accent);
 }
 

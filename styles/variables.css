@@ -1,21 +1,21 @@
 :root {
-  /* Colors — светлая тёплая тема (в духе Drinkit) */
-  --clr-bg: #faf5ef;             /* тёплый кремовый фон */
+  /* Colors — палитра Drinkit: белый/светло-серый фон + индиго-синий акцент */
+  --clr-bg: #f1f3f6;             /* светло-холодно-серый фон страницы */
   --clr-bg-card: #ffffff;        /* белые карточки */
-  --clr-bg-elevated: #f3ece3;    /* поля ввода, чипы, приподнятые блоки */
-  --clr-bg-overlay: rgba(40, 30, 22, 0.45);
+  --clr-bg-elevated: #eceff3;    /* поля ввода, чипы, приподнятые блоки */
+  --clr-bg-overlay: rgba(18, 20, 34, 0.50);
 
-  --clr-accent: #fa6423;         /* тёплый энергичный оранжевый */
-  --clr-accent-dark: #e14e12;
-  --clr-accent-light: rgba(250, 100, 35, 0.10);
-  --clr-accent-border: rgba(250, 100, 35, 0.30);
+  --clr-accent: #1e2ca0;         /* фирменный индиго-синий Drinkit */
+  --clr-accent-dark: #171f80;
+  --clr-accent-light: rgba(30, 44, 160, 0.09);
+  --clr-accent-border: rgba(30, 44, 160, 0.28);
 
-  --clr-text-primary: #211a15;   /* тёплый почти-чёрный (эспрессо) */
-  --clr-text-secondary: #6b6157; /* тёплый серый */
-  --clr-text-muted: #9d9187;     /* светлый тёплый серый */
+  --clr-text-primary: #14151a;   /* почти-чёрный */
+  --clr-text-secondary: #5c606b; /* холодный серый */
+  --clr-text-muted: #99a0ac;     /* светлый холодный серый */
 
-  --clr-border: #ece3d8;         /* мягкая тёплая граница */
-  --clr-border-hover: #dccfc0;
+  --clr-border: #e4e7ec;         /* мягкая холодная граница */
+  --clr-border-hover: #d2d7e0;
 
   --clr-success: #16a34a;
   --clr-error: #e23d3d;
@@ -63,11 +63,11 @@
   --radius-xl: 28px;
   --radius-full: 9999px;
 
-  /* Shadows — мягкие светлые тени */
-  --shadow-sm: 0 1px 2px rgba(40, 30, 22, 0.06), 0 1px 8px rgba(40, 30, 22, 0.04);
-  --shadow-md: 0 6px 20px rgba(40, 30, 22, 0.08);
-  --shadow-lg: 0 16px 48px rgba(40, 30, 22, 0.14);
-  --shadow-accent: 0 8px 24px rgba(250, 100, 35, 0.28);
+  /* Shadows — мягкие холодные тени */
+  --shadow-sm: 0 1px 2px rgba(20, 25, 45, 0.05), 0 1px 8px rgba(20, 25, 45, 0.04);
+  --shadow-md: 0 6px 20px rgba(20, 25, 45, 0.08);
+  --shadow-lg: 0 16px 48px rgba(20, 25, 45, 0.14);
+  --shadow-accent: 0 8px 24px rgba(30, 44, 160, 0.26);
 
   /* Transitions */
   --transition-fast: 150ms ease;
