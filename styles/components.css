@@ -104,9 +104,9 @@
 }
 
 .badge--hot      { background: var(--clr-accent); color: #fff; }
-.badge--new      { background: #2563eb; color: #fff; }
-.badge--featured { background: #92400e; color: #fde68a; }
-.badge--combo    { background: #5b21b6; color: #ddd6fe; }
+.badge--new      { background: #e8462e; color: #fff; }
+.badge--featured { background: #b45309; color: #ffedd5; }
+.badge--combo    { background: #6d28d9; color: #ede9fe; }
 
 /* ─── Cart button (header) ───────────────── */
 
@@ -1348,7 +1348,7 @@ textarea.form-input { resize: vertical; min-height: 80px; }
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
-  background: linear-gradient(90deg, rgba(249,115,22,0.12), rgba(249,115,22,0.04));
+  background: var(--clr-accent-light);
   border: 1px solid var(--clr-accent-border);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-8);
