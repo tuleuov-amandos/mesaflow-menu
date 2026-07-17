@@ -23,7 +23,7 @@ router.get('/restaurants/:slug/menu', async (req, res, next) => {
     });
 
     if (!restaurant) {
-      return res.status(404).json({ error: 'Restaurante não encontrado.' });
+      return res.status(404).json({ error: 'Кофейня не найдена.' });
     }
 
     res.json({

@@ -14,7 +14,7 @@ export async function createOrder(payload) {
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const error = new Error(data.error || 'Falha ao registrar o pedido.');
+    const error = new Error(data.error || 'Не удалось оформить заказ.');
     error.status = response.status;
     error.issues = data.issues;
     throw error;

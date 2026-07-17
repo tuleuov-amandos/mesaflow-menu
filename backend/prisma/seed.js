@@ -69,7 +69,7 @@ async function main() {
   for (const product of PRODUCTS) {
     const categoryId = categoryIdBySlug.get(product.category);
     if (!categoryId) {
-      throw new Error(`Categoria "${product.category}" não encontrada para o produto ${product.name}.`);
+      throw new Error(`Категория "${product.category}" не найдена для позиции ${product.name}.`);
     }
 
     const data = {
@@ -99,7 +99,7 @@ async function main() {
   }
 
   const productCount = await prisma.product.count({ where: { restaurantId: restaurant.id } });
-  console.log(`Seed concluído: ${restaurant.name} · ${menuCategories.length} categorias · ${productCount} produtos.`);
+  console.log(`Сидирование завершено: ${restaurant.name} · категорий: ${menuCategories.length} · позиций: ${productCount}.`);
 }
 
 main()

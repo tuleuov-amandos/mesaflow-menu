@@ -5,13 +5,14 @@ import { z } from 'zod';
 const router = Router();
 const prisma = new PrismaClient();
 
-const FREE_DELIVERY_ABOVE_CENTS = 8000;
+// Порог бесплатной доставки в тиынах (100 тиын = 1 ₸); должен совпадать с STORE.freeDeliveryAbove на фронтенде.
+const FREE_DELIVERY_ABOVE_CENTS = 500000;
 
 const orderSchema = z
   .object({
     customer: z.object({
-      name: z.string().trim().min(1, 'Nome é obrigatório.').max(120),
-      phone: z.string().trim().min(8, 'Telefone é obrigatório.').max(30),
+      name: z.string().trim().min(1, 'Укажите имя.').max(120),
+      phone: z.string().trim().min(8, 'Укажите телефон.').max(30),
     }),
     fulfillment: z.enum(['DELIVERY', 'PICKUP']),
     address: z
@@ -32,21 +33,21 @@ const orderSchema = z
             .object({
               removes: z.array(z.string()).optional(),
               extras: z.array(z.string()).optional(),
-              meatPoint: z.string().nullable().optional(),
+              size: z.string().nullable().optional(),
               drinkChoice: z.string().nullable().optional(),
             })
             .passthrough()
             .optional(),
         }),
       )
-      .min(1, 'O pedido precisa de pelo menos 1 item.'),
+      .min(1, 'В заказе должна быть хотя бы 1 позиция.'),
   })
   .superRefine((data, ctx) => {
     if (data.fulfillment === 'DELIVERY' && !data.address?.text?.trim()) {
-      ctx.addIssue({ code: 'custom', path: ['address', 'text'], message: 'Endereço é obrigatório para entrega.' });
+      ctx.addIssue({ code: 'custom', path: ['address', 'text'], message: 'Для доставки укажите адрес.' });
     }
     if (data.payment.method !== 'CASH' && data.payment.changeForCents != null) {
-      ctx.addIssue({ code: 'custom', path: ['payment', 'changeForCents'], message: 'Troco só se aplica a pagamento em dinheiro.' });
+      ctx.addIssue({ code: 'custom', path: ['payment', 'changeForCents'], message: 'Сдача применяется только при оплате наличными.' });
     }
   });
 
@@ -61,8 +62,8 @@ function generatePublicCode() {
 
 function sanitizeCustomizations(customizations, customizationConfig) {
   if (!customizations || typeof customizations !== 'object') return customizations ?? null;
-  if (customizationConfig?.supportsMeatDoneness === false && 'meatPoint' in customizations) {
-    const { meatPoint, ...rest } = customizations;
+  if (customizationConfig?.supportsSize === false && 'size' in customizations) {
+    const { size, ...rest } = customizations;
     return rest;
   }
   return customizations;
@@ -85,13 +86,13 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
   try {
     const parsed = orderSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(422).json({ error: 'Dados inválidos.', issues: parsed.error.issues });
+      return res.status(422).json({ error: 'Некорректные данные.', issues: parsed.error.issues });
     }
     const payload = parsed.data;
 
     const restaurant = await prisma.restaurant.findUnique({ where: { slug: req.params.slug } });
     if (!restaurant) {
-      return res.status(404).json({ error: 'Restaurante não encontrado.' });
+      return res.status(404).json({ error: 'Кофейня не найдена.' });
     }
 
     const externalIds = payload.items.map((item) => item.externalProductId);
@@ -106,7 +107,7 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
     for (const item of payload.items) {
       const product = productByExternalId.get(item.externalProductId);
       if (!product) {
-        return res.status(422).json({ error: `Produto indisponível: ${item.externalProductId}.` });
+        return res.status(422).json({ error: `Позиция недоступна: ${item.externalProductId}.` });
       }
 
       const prices = extraPriceMap(product.customizationConfig);
@@ -129,7 +130,7 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
 
     if (subtotalCents < restaurant.minimumOrderCents) {
       return res.status(422).json({
-        error: `Pedido mínimo de R$ ${(restaurant.minimumOrderCents / 100).toFixed(2)}.`,
+        error: `Минимальный заказ — ${Math.round(restaurant.minimumOrderCents / 100).toLocaleString('ru-RU')} ₸.`,
       });
     }
 
@@ -176,7 +177,7 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
     }
 
     if (!order) {
-      return res.status(500).json({ error: 'Não foi possível gerar o código do pedido.' });
+      return res.status(500).json({ error: 'Не удалось сгенерировать код заказа.' });
     }
 
     res.status(201).json({

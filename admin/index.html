@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Painel de Pedidos — MesaFlow</title>
+  <title>Панель заказов — MesaFlow</title>
   <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
   <link rel="stylesheet" href="/styles/variables.css" />
   <link rel="stylesheet" href="/admin/admin.css" />
@@ -21,18 +21,18 @@
               <path d="M5.5 12.7 6.8 19a2 2 0 0 0 2 1.6h6.4a2 2 0 0 0 2-1.6l1.3-6.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
-          <p class="login__brand-eyebrow">Painel de pedidos</p>
-          <h1 class="login__brand-name">Beco da Chapa</h1>
-          <p class="login__brand-text">Acompanhe pedidos, atualize o preparo e organize a operação em um só lugar.</p>
-          <p class="login__brand-sign">Tecnologia <span>MesaFlow</span></p>
+          <p class="login__brand-eyebrow">Панель заказов</p>
+          <h1 class="login__brand-name">Зёрна</h1>
+          <p class="login__brand-text">Отслеживайте заказы, обновляйте статус приготовления и управляйте работой в одном месте.</p>
+          <p class="login__brand-sign">Технология <span>MesaFlow</span></p>
         </aside>
 
         <form id="loginForm" class="login__card" autocomplete="off">
-          <h2 class="login__card-title">Acesso administrativo</h2>
-          <p class="login__card-text">Entre para acompanhar os pedidos do restaurante.</p>
-          <label class="login__label" for="password">Senha de acesso</label>
+          <h2 class="login__card-title">Вход в администрирование</h2>
+          <p class="login__card-text">Войдите, чтобы отслеживать заказы кофейни.</p>
+          <label class="login__label" for="password">Пароль доступа</label>
           <input class="login__input" type="password" id="password" name="password" required />
-          <button class="btn btn--primary" type="submit" id="loginBtn">Entrar</button>
+          <button class="btn btn--primary" type="submit" id="loginBtn">Войти</button>
           <p class="login__error" id="loginError" role="alert" hidden></p>
         </form>
       </div>
@@ -41,26 +41,26 @@
     <section id="panelView" class="panel" hidden>
       <header class="panel__top">
         <div class="panel__heading">
-          <p class="panel__eyebrow">Painel de pedidos</p>
-          <h1 class="panel__title">Beco da Chapa</h1>
-          <p class="panel__support">Acompanhe novos pedidos e atualize o preparo.</p>
+          <p class="panel__eyebrow">Панель заказов</p>
+          <h1 class="panel__title">Зёрна</h1>
+          <p class="panel__support">Отслеживайте новые заказы и обновляйте статус приготовления.</p>
         </div>
         <div class="panel__actions">
-          <button class="btn btn--ghost" type="button" id="logoutBtn">Sair</button>
+          <button class="btn btn--ghost" type="button" id="logoutBtn">Выйти</button>
           <p class="panel__update" id="lastUpdate"></p>
-          <p class="panel__signature">Tecnologia <span>MesaFlow</span></p>
+          <p class="panel__signature">Технология <span>MesaFlow</span></p>
         </div>
       </header>
 
       <div class="alert-banner" id="newOrdersAlert" role="status" hidden>
         <span class="alert-banner__dot" aria-hidden="true"></span>
-        <span>Há novos pedidos aguardando confirmação.</span>
+        <span>Есть новые заказы, ожидающие подтверждения.</span>
       </div>
 
       <div class="summary">
-        <div class="summary__card summary__card--novos"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Novos</span></div>
-        <div class="summary__card summary__card--preparo"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Em preparo</span></div>
-        <div class="summary__card summary__card--finalizados"><span class="summary__num" id="cardFinalizados">0</span><span class="summary__lbl">Finalizados</span></div>
+        <div class="summary__card summary__card--novos"><span class="summary__num" id="cardNovos">0</span><span class="summary__lbl">Новые</span></div>
+        <div class="summary__card summary__card--preparo"><span class="summary__num" id="cardPreparo">0</span><span class="summary__lbl">Готовятся</span></div>
+        <div class="summary__card summary__card--finalizados"><span class="summary__num" id="cardFinalizados">0</span><span class="summary__lbl">Завершены</span></div>
       </div>
 
       <div class="filters">
@@ -69,17 +69,17 @@
             <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" />
             <path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
           </svg>
-          <input class="filters__search" type="search" id="searchInput" placeholder="Buscar por número, nome, telefone ou código" />
+          <input class="filters__search" type="search" id="searchInput" placeholder="Поиск по номеру, имени, телефону или коду" />
         </div>
         <select class="filters__status" id="statusFilter">
-          <option value="">Todos os status</option>
-          <option value="NEW">Novo</option>
-          <option value="CONFIRMED">Confirmado</option>
-          <option value="PREPARING">Em preparo</option>
-          <option value="READY">Pronto</option>
-          <option value="OUT_FOR_DELIVERY">Saiu para entrega</option>
-          <option value="FINALIZED">Finalizado</option>
-          <option value="CANCELED">Cancelado</option>
+          <option value="">Все статусы</option>
+          <option value="NEW">Новый</option>
+          <option value="CONFIRMED">Подтверждён</option>
+          <option value="PREPARING">Готовится</option>
+          <option value="READY">Готов</option>
+          <option value="OUT_FOR_DELIVERY">В доставке</option>
+          <option value="FINALIZED">Завершён</option>
+          <option value="CANCELED">Отменён</option>
         </select>
       </div>
 
@@ -90,8 +90,8 @@
             <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
           </svg>
         </span>
-        <h2 class="empty__title">Nenhum pedido encontrado</h2>
-        <p class="empty__text">Novos pedidos aparecerão aqui assim que forem recebidos.</p>
+        <h2 class="empty__title">Заказы не найдены</h2>
+        <p class="empty__text">Новые заказы появятся здесь сразу после поступления.</p>
       </div>
       <ul class="orders" id="ordersList"></ul>
     </section>
@@ -99,7 +99,7 @@
     <div class="modal" id="detailModal" hidden>
       <div class="modal__backdrop" data-close></div>
       <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="detailCode">
-        <button class="modal__close" type="button" data-close aria-label="Fechar">×</button>
+        <button class="modal__close" type="button" data-close aria-label="Закрыть">×</button>
         <div id="detailContent" class="detail"></div>
       </div>
     </div>

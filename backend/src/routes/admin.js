@@ -25,7 +25,7 @@ function rateLimitLogin(req, res, next) {
     return next();
   }
   if (entry.count >= LOGIN_MAX_ATTEMPTS) {
-    return res.status(429).json({ error: 'Muitas tentativas. Aguarde alguns minutos.' });
+    return res.status(429).json({ error: 'Слишком много попыток. Подождите несколько минут.' });
   }
   entry.count += 1;
   next();
@@ -42,12 +42,12 @@ router.post('/login', rateLimitLogin, (req, res) => {
   const password = process.env.ADMIN_PASSWORD;
   const secret = process.env.ADMIN_JWT_SECRET;
   if (!password || !secret) {
-    return res.status(503).json({ error: 'Painel administrativo indisponível.' });
+    return res.status(503).json({ error: 'Панель администрирования недоступна.' });
   }
 
   const parsed = z.object({ password: z.string().min(1) }).safeParse(req.body);
   if (!parsed.success || !safeEqual(parsed.data.password, password)) {
-    return res.status(401).json({ error: 'Senha inválida.' });
+    return res.status(401).json({ error: 'Неверный пароль.' });
   }
 
   const token = jwt.sign({ role: 'admin' }, secret, { expiresIn: TOKEN_TTL });
@@ -121,7 +121,7 @@ router.get('/orders/:id', requireAdmin, async (req, res, next) => {
       },
     });
     if (!order) {
-      return res.status(404).json({ error: 'Pedido não encontrado.' });
+      return res.status(404).json({ error: 'Заказ не найден.' });
     }
 
     res.json({
@@ -167,24 +167,24 @@ router.patch('/orders/:id/status', requireAdmin, async (req, res, next) => {
   try {
     const parsed = statusPatchSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(422).json({ error: 'Dados inválidos.', issues: parsed.error.issues });
+      return res.status(422).json({ error: 'Некорректные данные.', issues: parsed.error.issues });
     }
     const { status: target, etaMinutes, note } = parsed.data;
 
     const current = await prisma.order.findUnique({ where: { id: req.params.id } });
     if (!current) {
-      return res.status(404).json({ error: 'Pedido não encontrado.' });
+      return res.status(404).json({ error: 'Заказ не найден.' });
     }
     if (current.status === target) {
-      return res.status(409).json({ error: 'O pedido já está nesse status.' });
+      return res.status(409).json({ error: 'Заказ уже находится в этом статусе.' });
     }
     if (!canTransition(current.status, target, current.fulfillmentType)) {
       return res.status(409).json({
-        error: `Transição não permitida: ${STATUS_LABELS[current.status]} → ${STATUS_LABELS[target]}.`,
+        error: `Переход недопустим: ${STATUS_LABELS[current.status]} → ${STATUS_LABELS[target]}.`,
       });
     }
     if (target === 'CANCELED' && !note) {
-      return res.status(422).json({ error: 'Motivo do cancelamento é obrigatório.' });
+      return res.status(422).json({ error: 'Причина отмены обязательна.' });
     }
 
     const orderData = { status: target };

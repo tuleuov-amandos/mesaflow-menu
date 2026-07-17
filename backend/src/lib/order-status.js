@@ -9,13 +9,13 @@ export const ORDER_STATUSES = [
 ];
 
 export const STATUS_LABELS = {
-  NEW: 'Novo',
-  CONFIRMED: 'Confirmado',
-  PREPARING: 'Em preparo',
-  READY: 'Pronto',
-  OUT_FOR_DELIVERY: 'Saiu para entrega',
-  FINALIZED: 'Finalizado',
-  CANCELED: 'Cancelado',
+  NEW: 'Новый',
+  CONFIRMED: 'Подтверждён',
+  PREPARING: 'Готовится',
+  READY: 'Готов',
+  OUT_FOR_DELIVERY: 'В доставке',
+  FINALIZED: 'Завершён',
+  CANCELED: 'Отменён',
 };
 
 export function isValidStatus(status) {

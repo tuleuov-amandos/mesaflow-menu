@@ -2,32 +2,32 @@ import { API_URL } from '../src/config.js';
 
 const TOKEN_KEY = 'mesaflow_admin_token';
 const POLL_MS = 30000;
-const RESTAURANT_NAME = 'Beco da Chapa';
+const RESTAURANT_NAME = 'Зёрна';
 const NEW_ATTENTION_MINUTES = 10;
 const DEFAULT_ETA_MINUTES = 35;
 
 const STATUS_LABELS = {
-  NEW: 'Novo',
-  CONFIRMED: 'Confirmado',
-  PREPARING: 'Em preparo',
-  READY: 'Pronto',
-  OUT_FOR_DELIVERY: 'Saiu para entrega',
-  FINALIZED: 'Finalizado',
-  CANCELED: 'Cancelado',
+  NEW: 'Новый',
+  CONFIRMED: 'Подтверждён',
+  PREPARING: 'Готовится',
+  READY: 'Готов',
+  OUT_FOR_DELIVERY: 'В доставке',
+  FINALIZED: 'Завершён',
+  CANCELED: 'Отменён',
 };
 
 const ACTION_LABELS = {
-  CONFIRMED: 'Confirmar pedido',
-  PREPARING: 'Iniciar preparo',
-  READY: 'Marcar como pronto',
-  OUT_FOR_DELIVERY: 'Sair para entrega',
-  FINALIZED: 'Finalizar pedido',
-  CANCELED: 'Cancelar pedido',
+  CONFIRMED: 'Подтвердить заказ',
+  PREPARING: 'Начать приготовление',
+  READY: 'Отметить готовым',
+  OUT_FOR_DELIVERY: 'Передать в доставку',
+  FINALIZED: 'Завершить заказ',
+  CANCELED: 'Отменить заказ',
 };
 
 const ACTIVE_STATUSES = new Set(['CONFIRMED', 'PREPARING', 'READY', 'OUT_FOR_DELIVERY']);
-const FULFILLMENT_LABELS = { DELIVERY: 'Entrega', PICKUP: 'Retirada' };
-const PAYMENT_LABELS = { PIX: 'Pix', CARD: 'Cartão', CASH: 'Dinheiro' };
+const FULFILLMENT_LABELS = { DELIVERY: 'Доставка', PICKUP: 'Самовывоз' };
+const PAYMENT_LABELS = { PIX: 'Kaspi', CARD: 'Карта', CASH: 'Наличные' };
 
 const els = {
   loginView: document.getElementById('loginView'),
@@ -69,12 +69,12 @@ function clearToken() {
 }
 
 function money(cents) {
-  return `R$ ${(Number(cents || 0) / 100).toFixed(2).replace('.', ',')}`;
+  return `${Math.round(Number(cents || 0) / 100).toLocaleString('ru-RU')} ₸`;
 }
 
 function formatDateTime(value) {
   const d = new Date(value);
-  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 
 function minutesSince(value) {
@@ -82,17 +82,17 @@ function minutesSince(value) {
 }
 
 function waitingLabel(mins) {
-  if (mins < 1) return 'agora mesmo';
-  if (mins === 1) return 'há 1 min';
-  if (mins < 60) return `há ${mins} min`;
+  if (mins < 1) return 'только что';
+  if (mins === 1) return '1 мин назад';
+  if (mins < 60) return `${mins} мин назад`;
   const h = Math.floor(mins / 60);
   const m = mins % 60;
-  return `há ${h}h${m ? ` ${m}min` : ''}`;
+  return `${h} ч${m ? ` ${m} мин` : ''} назад`;
 }
 
 function whatsappBase(phone) {
   const digits = String(phone || '').replace(/\D/g, '');
-  const normalized = digits.length <= 11 ? `55${digits}` : digits;
+  const normalized = digits.length <= 10 ? `7${digits}` : digits;
   return `https://wa.me/${normalized}`;
 }
 
@@ -123,7 +123,7 @@ async function api(path, options = {}) {
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error || 'Erro na requisição.');
+    throw new Error(data.error || 'Ошибка запроса.');
   }
   return data;
 }
@@ -171,7 +171,7 @@ async function login(password) {
     body: JSON.stringify({ password }),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Falha ao entrar.');
+  if (!res.ok) throw new Error(data.error || 'Не удалось войти.');
   return data.token;
 }
 
@@ -225,13 +225,13 @@ function renderOrders(orders) {
     li.appendChild(head);
 
     const meta = el('div', 'order__meta');
-    meta.appendChild(el('span', 'order__customer', order.customerName || 'Sem nome'));
+    meta.appendChild(el('span', 'order__customer', order.customerName || 'Без имени'));
     meta.appendChild(el('span', 'order__phone', order.customerPhone || ''));
     li.appendChild(meta);
 
     if (isNew) {
       const waitCls = waited >= NEW_ATTENTION_MINUTES ? 'order__waiting order__waiting--attention' : 'order__waiting';
-      li.appendChild(el('span', waitCls, `Aguardando confirmação ${waitingLabel(waited)}`));
+      li.appendChild(el('span', waitCls, `Ожидает подтверждения · ${waitingLabel(waited)}`));
     }
 
     const foot = el('div', 'order__foot');
@@ -268,7 +268,7 @@ async function loadOrders() {
     renderSummary(data.summary);
     renderOrders(data.orders);
     trackNewArrivals(data.orders);
-    els.lastUpdate.textContent = `Atualizado às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+    els.lastUpdate.textContent = `Обновлено в ${new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`;
   } catch (err) {
     if (err.message !== 'unauthorized') console.warn(err.message);
   }
@@ -278,13 +278,13 @@ function renderCustomizations(container, customizations) {
   if (!customizations || typeof customizations !== 'object') return;
   const parts = [];
   if (Array.isArray(customizations.removes) && customizations.removes.length) {
-    parts.push(`Sem: ${customizations.removes.join(', ')}`);
+    parts.push(`Без: ${customizations.removes.join(', ')}`);
   }
   if (Array.isArray(customizations.extras) && customizations.extras.length) {
-    parts.push(`Adicionais: ${customizations.extras.join(', ')}`);
+    parts.push(`Добавки: ${customizations.extras.join(', ')}`);
   }
-  if (customizations.meatPoint) parts.push(`Ponto: ${customizations.meatPoint}`);
-  if (customizations.drinkChoice) parts.push(`Bebida: ${customizations.drinkChoice}`);
+  if (customizations.size) parts.push(`Размер: ${customizations.size}`);
+  if (customizations.drinkChoice) parts.push(`Напиток: ${customizations.drinkChoice}`);
   for (const line of parts) {
     container.appendChild(el('span', 'detail__custom', line));
   }
@@ -296,26 +296,26 @@ function lastCancelReason(order) {
 }
 
 function generateStatusMessage(order, status) {
-  const name = order.customerName || 'cliente';
+  const name = order.customerName || 'клиент';
   const code = `#${order.orderNumber}`;
   const isDelivery = order.fulfillmentType === 'DELIVERY';
   const eta = order.etaMinutes;
   switch (status) {
     case 'CONFIRMED':
-      return `Olá, ${name}! Seu pedido ${code} no ${RESTAURANT_NAME} foi confirmado.${eta ? ` Previsão de preparo: ${eta} minutos.` : ''}`;
+      return `Здравствуйте, ${name}! Ваш заказ ${code} в кофейне «${RESTAURANT_NAME}» подтверждён.${eta ? ` Ориентировочное время приготовления: ${eta} минут.` : ''}`;
     case 'PREPARING':
-      return `Olá, ${name}! Seu pedido ${code} já está em preparo no ${RESTAURANT_NAME}.`;
+      return `Здравствуйте, ${name}! Ваш заказ ${code} уже готовится в кофейне «${RESTAURANT_NAME}».`;
     case 'READY':
       return isDelivery
-        ? `Olá, ${name}! Seu pedido ${code} está pronto e aguardando a saída para entrega.`
-        : `Olá, ${name}! Seu pedido ${code} está pronto para retirada no ${RESTAURANT_NAME}.`;
+        ? `Здравствуйте, ${name}! Ваш заказ ${code} готов и ожидает передачи в доставку.`
+        : `Здравствуйте, ${name}! Ваш заказ ${code} готов к самовывозу в кофейне «${RESTAURANT_NAME}».`;
     case 'OUT_FOR_DELIVERY':
-      return `Olá, ${name}! Seu pedido ${code} saiu para entrega e está a caminho.`;
+      return `Здравствуйте, ${name}! Ваш заказ ${code} передан в доставку и уже в пути.`;
     case 'FINALIZED':
-      return `Olá, ${name}! Obrigado por pedir no ${RESTAURANT_NAME}. Esperamos você novamente em breve!`;
+      return `Здравствуйте, ${name}! Спасибо за заказ в кофейне «${RESTAURANT_NAME}». Ждём вас снова!`;
     case 'CANCELED': {
       const reason = lastCancelReason(order);
-      return `Olá, ${name}! Infelizmente seu pedido ${code} foi cancelado.${reason ? ` Motivo: ${reason}.` : ''}`;
+      return `Здравствуйте, ${name}! К сожалению, ваш заказ ${code} был отменён.${reason ? ` Причина: ${reason}.` : ''}`;
     }
     default:
       return '';
@@ -324,8 +324,8 @@ function generateStatusMessage(order, status) {
 
 async function copyMessage(message, btn) {
   const done = () => {
-    btn.textContent = 'Copiado';
-    setTimeout(() => { btn.textContent = 'Copiar mensagem'; }, 1500);
+    btn.textContent = 'Скопировано';
+    setTimeout(() => { btn.textContent = 'Скопировать сообщение'; }, 1500);
   };
   try {
     await navigator.clipboard.writeText(message);
@@ -346,23 +346,23 @@ async function copyMessage(message, btn) {
 
 function buildCommunication(order) {
   const wrap = el('div', 'comms');
-  wrap.appendChild(el('h3', 'detail__section', 'Mensagem para o cliente'));
+  wrap.appendChild(el('h3', 'detail__section', 'Сообщение клиенту'));
 
   if (order.status === 'NEW') {
-    wrap.appendChild(el('p', 'comms__hint', 'Confirme o pedido para preparar uma mensagem ao cliente.'));
+    wrap.appendChild(el('p', 'comms__hint', 'Подтвердите заказ, чтобы подготовить сообщение клиенту.'));
     return wrap;
   }
 
   const message = generateStatusMessage(order, order.status);
   if (!message) {
-    wrap.appendChild(el('p', 'comms__hint', 'Nenhuma mensagem preparada para este status.'));
+    wrap.appendChild(el('p', 'comms__hint', 'Для этого статуса нет подготовленного сообщения.'));
     return wrap;
   }
 
   wrap.appendChild(el('p', 'comms__preview', message));
 
   const actions = el('div', 'comms__actions');
-  const copyBtn = el('button', 'btn btn--ghost', 'Copiar mensagem');
+  const copyBtn = el('button', 'btn btn--ghost', 'Скопировать сообщение');
   copyBtn.type = 'button';
   copyBtn.addEventListener('click', () => copyMessage(message, copyBtn));
 
@@ -371,7 +371,7 @@ function buildCommunication(order) {
   waLink.href = whatsappWithMessage(order.customerPhone, message);
   waLink.target = '_blank';
   waLink.rel = 'noopener';
-  waLink.textContent = 'Abrir no WhatsApp';
+  waLink.textContent = 'Открыть в WhatsApp';
 
   actions.append(copyBtn, waLink);
   wrap.appendChild(actions);
@@ -398,10 +398,10 @@ function renderActions(order, host) {
   host.textContent = '';
   const next = order.nextStatuses || [];
   if (!next.length) {
-    host.appendChild(el('p', 'detail__terminal', 'Pedido encerrado — nenhuma ação disponível.'));
+    host.appendChild(el('p', 'detail__terminal', 'Заказ закрыт — действия недоступны.'));
     return;
   }
-  host.appendChild(el('h3', 'detail__section', 'Ações do pedido'));
+  host.appendChild(el('h3', 'detail__section', 'Действия по заказу'));
   const wrap = el('div', 'detail__buttons');
   for (const st of next) {
     const isCancel = st === 'CANCELED';
@@ -419,10 +419,10 @@ function renderActions(order, host) {
 
 function renderEtaForm(order, host) {
   host.textContent = '';
-  host.appendChild(el('h3', 'detail__section', 'Confirmar pedido'));
+  host.appendChild(el('h3', 'detail__section', 'Подтвердить заказ'));
   const form = el('div', 'action-form');
 
-  const label = el('label', 'action-form__label', 'Previsão de preparo (minutos)');
+  const label = el('label', 'action-form__label', 'Время приготовления (минут)');
   label.setAttribute('for', 'etaInput');
   const input = document.createElement('input');
   input.type = 'number';
@@ -437,15 +437,15 @@ function renderEtaForm(order, host) {
   err.hidden = true;
 
   const actions = el('div', 'action-form__actions');
-  const confirm = el('button', 'btn btn--primary', 'Confirmar');
+  const confirm = el('button', 'btn btn--primary', 'Подтвердить');
   confirm.type = 'button';
-  const back = el('button', 'btn btn--ghost', 'Voltar');
+  const back = el('button', 'btn btn--ghost', 'Назад');
   back.type = 'button';
 
   confirm.addEventListener('click', () => {
     const value = Number(input.value);
     if (!Number.isInteger(value) || value < 5 || value > 180) {
-      err.textContent = 'Informe um valor inteiro entre 5 e 180 minutos.';
+      err.textContent = 'Укажите целое число от 5 до 180 минут.';
       err.hidden = false;
       return;
     }
@@ -461,10 +461,10 @@ function renderEtaForm(order, host) {
 
 function renderCancelForm(order, host) {
   host.textContent = '';
-  host.appendChild(el('h3', 'detail__section', 'Cancelar pedido'));
+  host.appendChild(el('h3', 'detail__section', 'Отменить заказ'));
   const form = el('div', 'action-form');
 
-  const label = el('label', 'action-form__label', 'Motivo do cancelamento');
+  const label = el('label', 'action-form__label', 'Причина отмены');
   label.setAttribute('for', 'cancelReason');
   const ta = document.createElement('textarea');
   ta.id = 'cancelReason';
@@ -476,15 +476,15 @@ function renderCancelForm(order, host) {
   err.hidden = true;
 
   const actions = el('div', 'action-form__actions');
-  const confirm = el('button', 'btn btn--danger', 'Confirmar cancelamento');
+  const confirm = el('button', 'btn btn--danger', 'Подтвердить отмену');
   confirm.type = 'button';
-  const back = el('button', 'btn btn--ghost', 'Voltar');
+  const back = el('button', 'btn btn--ghost', 'Назад');
   back.type = 'button';
 
   confirm.addEventListener('click', () => {
     const reason = ta.value.trim();
     if (!reason) {
-      err.textContent = 'Informe o motivo do cancelamento.';
+      err.textContent = 'Укажите причину отмены.';
       err.hidden = false;
       return;
     }
@@ -503,28 +503,28 @@ function renderDetail(order) {
   c.textContent = '';
 
   const header = el('div', 'detail__header');
-  const code = el('h2', 'detail__code', `Pedido #${order.orderNumber}`);
+  const code = el('h2', 'detail__code', `Заказ #${order.orderNumber}`);
   code.id = 'detailCode';
   header.appendChild(code);
   header.appendChild(statusBadge(order.status));
   c.appendChild(header);
-  c.appendChild(el('p', 'detail__pubcode', `Ref. ${order.publicCode}`));
+  c.appendChild(el('p', 'detail__pubcode', `Код ${order.publicCode}`));
 
   c.appendChild(el('p', 'detail__when', formatDateTime(order.createdAt)));
 
   const info = el('div', 'detail__info');
-  info.appendChild(el('span', null, order.customerName || 'Sem nome'));
-  info.appendChild(el('span', null, order.customerPhone || 'Sem telefone'));
+  info.appendChild(el('span', null, order.customerName || 'Без имени'));
+  info.appendChild(el('span', null, order.customerPhone || 'Без телефона'));
   info.appendChild(el('span', null, `${FULFILLMENT_LABELS[order.fulfillmentType]} · ${PAYMENT_LABELS[order.paymentMethod]}`));
   if (order.address) info.appendChild(el('span', null, order.address));
-  if (order.changeForCents) info.appendChild(el('span', null, `Troco para ${money(order.changeForCents)}`));
+  if (order.changeForCents) info.appendChild(el('span', null, `Сдача с ${money(order.changeForCents)}`));
   if (order.etaMinutes && ACTIVE_STATUSES.has(order.status)) {
-    info.appendChild(el('span', 'detail__eta', `Previsão de preparo: ${order.etaMinutes} min`));
+    info.appendChild(el('span', 'detail__eta', `Время приготовления: ${order.etaMinutes} мин`));
   }
   if (order.status === 'NEW') {
-    info.appendChild(el('span', 'detail__waiting', `Aguardando confirmação ${waitingLabel(minutesSince(order.createdAt))}`));
+    info.appendChild(el('span', 'detail__waiting', `Ожидает подтверждения · ${waitingLabel(minutesSince(order.createdAt))}`));
   }
-  if (order.notes) info.appendChild(el('span', 'detail__notes', `Obs.: ${order.notes}`));
+  if (order.notes) info.appendChild(el('span', 'detail__notes', `Комментарий: ${order.notes}`));
   c.appendChild(info);
 
   const wa = document.createElement('a');
@@ -532,11 +532,11 @@ function renderDetail(order) {
   wa.href = whatsappBase(order.customerPhone);
   wa.target = '_blank';
   wa.rel = 'noopener';
-  wa.textContent = 'Abrir conversa no WhatsApp';
+  wa.textContent = 'Открыть чат в WhatsApp';
   c.appendChild(wa);
 
   const itemsWrap = el('div', 'detail__items');
-  itemsWrap.appendChild(el('h3', 'detail__section', 'Itens'));
+  itemsWrap.appendChild(el('h3', 'detail__section', 'Позиции'));
   for (const item of order.items) {
     const row = el('div', 'detail__item');
     row.appendChild(el('span', 'detail__item-qty', `${item.quantity}×`));
@@ -550,9 +550,9 @@ function renderDetail(order) {
   c.appendChild(itemsWrap);
 
   const totals = el('div', 'detail__totals');
-  totals.appendChild(totalRow('Subtotal', money(order.subtotalCents)));
-  totals.appendChild(totalRow('Entrega', order.deliveryFeeCents ? money(order.deliveryFeeCents) : 'Grátis'));
-  const totalLine = totalRow('Total', money(order.totalCents));
+  totals.appendChild(totalRow('Сумма', money(order.subtotalCents)));
+  totals.appendChild(totalRow('Доставка', order.deliveryFeeCents ? money(order.deliveryFeeCents) : 'Бесплатно'));
+  const totalLine = totalRow('Итого', money(order.totalCents));
   totalLine.classList.add('detail__total-final');
   totals.appendChild(totalLine);
   c.appendChild(totals);
@@ -564,7 +564,7 @@ function renderDetail(order) {
   c.appendChild(buildCommunication(order));
 
   const timeline = el('div', 'detail__timeline');
-  timeline.appendChild(el('h3', 'detail__section', 'Histórico'));
+  timeline.appendChild(el('h3', 'detail__section', 'История'));
   const tl = el('ol', 'timeline');
   for (const event of order.history) {
     const item = el('li', 'timeline__item');
@@ -574,8 +574,8 @@ function renderDetail(order) {
     line.appendChild(el('span', 'timeline__status', STATUS_LABELS[event.status] ?? event.status));
     line.appendChild(el('time', 'timeline__time', formatDateTime(event.createdAt)));
     txt.appendChild(line);
-    if (event.etaMinutes) txt.appendChild(el('span', 'timeline__note', `Previsão: ${event.etaMinutes} min`));
-    if (event.note) txt.appendChild(el('span', 'timeline__note', `Motivo: ${event.note}`));
+    if (event.etaMinutes) txt.appendChild(el('span', 'timeline__note', `Время: ${event.etaMinutes} мин`));
+    if (event.note) txt.appendChild(el('span', 'timeline__note', `Причина: ${event.note}`));
     item.appendChild(txt);
     tl.appendChild(item);
   }
@@ -615,7 +615,7 @@ async function applyStatus(order, status, extra = {}) {
     const fresh = await fetchDetail(order.id);
     currentDetailId = order.id;
     renderDetail(fresh);
-    showToast('Status atualizado');
+    showToast('Статус обновлён');
     const commsSection = els.detailContent.querySelector('.comms');
     if (commsSection) commsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     await loadOrders();
@@ -636,7 +636,7 @@ els.loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   els.loginError.hidden = true;
   els.loginBtn.disabled = true;
-  els.loginBtn.textContent = 'Entrando...';
+  els.loginBtn.textContent = 'Вход...';
   try {
     const token = await login(els.password.value);
     setToken(token);
@@ -648,7 +648,7 @@ els.loginForm.addEventListener('submit', async (e) => {
     els.loginError.hidden = false;
   } finally {
     els.loginBtn.disabled = false;
-    els.loginBtn.textContent = 'Entrar';
+    els.loginBtn.textContent = 'Войти';
   }
 });
 

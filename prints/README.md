@@ -1,24 +1,24 @@
-# Prints — MesaFlow Menu (demo Beco da Chapa)
+# Скриншоты — MesaFlow Menu (демо «Зёрна»)
 
-Capturas para portfólio. Gere estas imagens manualmente (a ferramenta de captura
-automática deste ambiente não salva arquivos no projeto) e salve nesta pasta com
-exatamente estes nomes:
+Скриншоты для портфолио. Сгенерируйте эти изображения вручную (инструмент
+автоматической съёмки в этом окружении не сохраняет файлы в проект) и сохраните
+в этой папке ровно под этими именами:
 
-## Desktop (largura ≥ 1280px)
-- `home-desktop.png` — hero completo (título, avaliação, foto do hambúrguer).
-- `menu-desktop.png` — grade de produtos com fotos reais e filtros de categoria.
-- `cart-desktop.png` — carrinho lateral aberto com itens e total.
-- `checkout-desktop.png` — modal de checkout com dados/entrega/pagamento.
-- `about-reviews-desktop.png` — seção "Sobre" + avaliações.
+## Десктоп (ширина ≥ 1280px)
+- `home-desktop.png` — полный hero (заголовок, оценка, фото кофе).
+- `menu-desktop.png` — сетка товаров с реальными фото и фильтрами по категориям.
+- `cart-desktop.png` — открытая боковая корзина с позициями и итогом.
+- `checkout-desktop.png` — модалка оформления с данными/получением/оплатой.
+- `about-reviews-desktop.png` — секция «О нас» + отзывы.
 
-## Mobile (largura 375–390px)
-- `mobile-home.png` — hero empilhado.
-- `mobile-menu.png` — cards em coluna única com imagens grandes.
-- `mobile-cart.png` — carrinho / barra de carrinho.
-- `mobile-checkout.png` — checkout utilizável no celular.
+## Мобильные (ширина 375–390px)
+- `mobile-home.png` — hero в столбик.
+- `mobile-menu.png` — карточки в один столбец с крупными изображениями.
+- `mobile-cart.png` — корзина / панель корзины.
+- `mobile-checkout.png` — оформление, удобное на телефоне.
 
-## Rodapé
-- `footer-location.png` — rodapé com mapa, endereço e QR Code.
+## Подвал
+- `footer-location.png` — подвал с картой, адресом и QR-кодом.
 
-Dica: rode `npx serve produtos/CardapioPro` e capture com o navegador em estado
-limpo (sem modal aberto, sem itens de teste estranhos no carrinho).
+Подсказка: запустите `npx serve produtos/CardapioPro` и снимайте в браузере в
+чистом состоянии (без открытой модалки, без лишних тестовых позиций в корзине).

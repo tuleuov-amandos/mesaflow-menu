@@ -1,157 +1,157 @@
-# MesaFlow — Sistema de pedidos diretos para restaurantes
+# MesaFlow — система прямых заказов для заведений
 
-Site, cardápio, checkout, pedidos persistidos e painel operacional para o restaurante
-receber pedidos pelo **próprio canal** — sem comissão de marketplace nos pedidos feitos
-pelo próprio canal. O cliente escolhe, personaliza e finaliza; o pedido é registrado em
-banco e acompanhado por um painel administrativo com fluxo guiado e comunicação assistida
-por WhatsApp.
+Сайт, меню, оформление заказа, сохраняемые заказы и операционная панель, чтобы заведение
+принимало заказы через **собственный канал** — без комиссии маркетплейса на заказах,
+сделанных через собственный канал. Клиент выбирает, настраивает и оформляет; заказ
+сохраняется в базе и ведётся через административную панель с пошаговым сценарием и
+подсказками для общения в WhatsApp.
 
-**Demo:** **Beco da Chapa** — hamburgueria artesanal (marca fictícia para demonstração;
-contatos, endereço e telefones são fictícios).
-
----
-
-## Links
-
-- **Demo pública:** https://mesaflow-menu.vercel.app
-- **Painel administrativo:** https://mesaflow-menu.vercel.app/admin (acesso por senha; a senha não é pública)
-- **Repositório:** https://github.com/RhanielRodri/mesaflow-menu
+**Демо:** кофейня **«Зёрна»** — обжарка кофе (вымышленный бренд для демонстрации;
+контакты, адрес и телефоны вымышленные).
 
 ---
 
-## Galeria
+## Ссылки
+
+- **Публичное демо:** https://mesaflow-menu.vercel.app
+- **Административная панель:** https://mesaflow-menu.vercel.app/admin (вход по паролю; пароль не публичный)
+- **Репозиторий:** https://github.com/RhanielRodri/mesaflow-menu
+
+---
+
+## Галерея
 
 | | |
 |---|---|
-| ![Home](docs/screenshots/home-desktop.png) | ![Cardápio](docs/screenshots/menu-desktop.png) |
-| ![Login do painel](docs/screenshots/admin-login-desktop.png) | ![Painel de pedidos](docs/screenshots/admin-dashboard-desktop.png) |
-| ![Detalhe do pedido](docs/screenshots/admin-order-detail-desktop.png) | |
+| ![Главная](docs/screenshots/home-desktop.png) | ![Меню](docs/screenshots/menu-desktop.png) |
+| ![Вход в панель](docs/screenshots/admin-login-desktop.png) | ![Панель заказов](docs/screenshots/admin-dashboard-desktop.png) |
+| ![Детали заказа](docs/screenshots/admin-order-detail-desktop.png) | |
 
-| Mobile — cardápio | Mobile — painel |
+| Мобильная — меню | Мобильная — панель |
 |---|---|
-| ![Cardápio mobile](docs/screenshots/menu-mobile.png) | ![Painel mobile](docs/screenshots/admin-mobile.png) |
+| ![Меню на мобильном](docs/screenshots/menu-mobile.png) | ![Панель на мобильном](docs/screenshots/admin-mobile.png) |
 
 ---
 
-## Funcionalidades para o cliente
+## Возможности для клиента
 
-- Cardápio por categorias
-- Busca em tempo real (com normalização de acentos) e favoritos
-- Carrinho com quantidades, linhas de personalização, total e frete grátis progressivo
-- Personalização por produto (remover ingredientes, adicionais com preço e ponto da carne
-  apenas nos produtos compatíveis)
-- Retirada ou entrega, com endereço condicional
-- Pagamento por Pix, cartão ou dinheiro, com troco condicional
-- Número humano do pedido (ex.: **#1042**) na confirmação e na mensagem
-- WhatsApp complementar: o checkout monta uma mensagem formatada com o resumo do pedido
-
----
-
-## Funcionalidades operacionais (painel `/admin`)
-
-- Painel protegido por senha (JWT de sessão curta)
-- Fila de pedidos ordenada, com cards de resumo (Novos / Em preparo / Finalizados)
-- Alerta discreto de novos pedidos e tempo de espera dos pedidos aguardando confirmação
-- Previsão de preparo ao confirmar (em minutos)
-- Fluxo guiado por tipo de entrega:
-  - **Retirada:** Novo → Confirmado → Em preparo → Pronto → Finalizado
-  - **Entrega:** Novo → Confirmado → Em preparo → Pronto → Saiu para entrega → Finalizado
-- Histórico de status append-only, com previsão e motivo quando aplicável
-- Cancelamento com motivo obrigatório, registrado na timeline
-- Comunicação assistida: mensagem por status pronta para **copiar** ou **abrir no WhatsApp**
-  (o envio é sempre manual — o sistema nunca envia nem afirma que o cliente foi avisado)
-- Busca por número, `#número`, nome, telefone ou código técnico
-- Layout responsivo (desktop e mobile)
+- Меню по категориям
+- Поиск в реальном времени (с нормализацией регистра) и избранное
+- Корзина с количеством, строками кастомизации, итогом и прогрессом до бесплатной доставки
+- Настройка по позиции (убрать ингредиенты, платные добавки и размер стакана
+  только у совместимых позиций)
+- Самовывоз или доставка, с условным полем адреса
+- Оплата через Kaspi, картой или наличными, с условным полем сдачи
+- Человекочитаемый номер заказа (напр.: **#1042**) в подтверждении и в сообщении
+- Дополнение через WhatsApp: оформление формирует отформатированное сообщение со сводкой заказа
 
 ---
 
-## Fluxo
+## Операционные возможности (панель `/admin`)
+
+- Панель под паролем (JWT с короткой сессией)
+- Упорядоченная очередь заказов, карточки-сводки (Новые / Готовятся / Завершены)
+- Ненавязчивое уведомление о новых заказах и время ожидания подтверждения
+- Время приготовления при подтверждении (в минутах)
+- Пошаговый сценарий по типу получения:
+  - **Самовывоз:** Новый → Подтверждён → Готовится → Готов → Завершён
+  - **Доставка:** Новый → Подтверждён → Готовится → Готов → В доставке → Завершён
+- История статусов только на добавление, с временем и причиной, где применимо
+- Отмена с обязательной причиной, фиксируется в истории
+- Помощь в общении: сообщение по статусу готово для **копирования** или **открытия в WhatsApp**
+  (отправка всегда ручная — система никогда не отправляет и не утверждает, что клиент оповещён)
+- Поиск по номеру, `#номеру`, имени, телефону или техническому коду
+- Адаптивная вёрстка (десктоп и мобильные)
+
+---
+
+## Поток
 
 ```
-Cliente → cardápio → checkout → API → PostgreSQL → painel → WhatsApp assistido
+Клиент → меню → оформление → API → PostgreSQL → панель → WhatsApp с подсказками
 ```
 
 ```mermaid
 flowchart LR
-  A[Cliente] --> B[Cardapio]
-  B --> C[Checkout]
+  A[Клиент] --> B[Меню]
+  B --> C[Оформление]
   C --> D[API Express]
   D --> E[(PostgreSQL / Neon)]
-  E --> F[Painel admin]
-  F --> G[WhatsApp assistido]
+  E --> F[Панель админа]
+  F --> G[WhatsApp с подсказками]
 ```
 
-O número humano do pedido é gerado de forma atômica por restaurante no momento da criação;
-o código técnico `MF-XXXXXX` continua salvo como referência interna.
+Человекочитаемый номер заказа генерируется атомарно для каждого заведения в момент создания;
+технический код `MF-XXXXXX` сохраняется как внутренняя ссылка.
 
 ---
 
-## Arquitetura
+## Архитектура
 
-- **Frontend estático:** HTML, CSS e JavaScript modular (ES Modules nativos), sem framework
-  e sem build — publicado na **Vercel**.
-- **Backend:** Node.js + Express + Prisma 6, hospedado no **Render**.
-- **Banco:** PostgreSQL no **Neon** (valores monetários sempre em centavos inteiros).
-- **Modelos:** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem`, `OrderStatusHistory`.
-
----
-
-## Segurança
-
-- Rotas administrativas protegidas por **JWT** de expiração curta e rate limit no login.
-- Segredos apenas em variáveis de ambiente (nunca versionados).
-- A demo usa exclusivamente dados fictícios.
-- A senha do painel **não** consta neste repositório nem no README.
+- **Статичный фронтенд:** HTML, CSS и модульный JavaScript (нативные ES Modules), без фреймворка
+  и без сборки — публикуется на **Vercel**.
+- **Бэкенд:** Node.js + Express + Prisma 6, размещён на **Render**.
+- **База:** PostgreSQL на **Neon** (денежные значения всегда в целых тиынах).
+- **Модели:** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem`, `OrderStatusHistory`.
 
 ---
 
-## Estrutura do repositório
+## Безопасность
+
+- Административные маршруты защищены **JWT** с коротким сроком жизни и rate limit на входе.
+- Секреты только в переменных окружения (никогда не коммитятся).
+- В демо используются исключительно вымышленные данные.
+- Пароль панели **не** содержится в этом репозитории и в README.
+
+---
+
+## Структура репозитория
 
 ```
 CardapioPro/
-├── index.html            site público (cardápio + checkout)
-├── admin/                painel operacional (login, fila, detalhe, comunicação)
-├── src/                  módulos do frontend (data, cart, customize, checkout, ui, api…)
-├── styles/               design tokens e estilos
-├── assets/               imagens, favicon
+├── index.html            публичный сайт (меню + оформление заказа)
+├── admin/                операционная панель (вход, очередь, детали, общение)
+├── src/                  модули фронтенда (data, cart, customize, checkout, ui, api…)
+├── styles/               токены дизайна и стили
+├── assets/               изображения, favicon
 ├── backend/              API Express + Prisma
-│   ├── src/              app, rotas (health, public menu, orders, admin), middlewares
-│   └── prisma/           schema, migrations e seed idempotente
-├── docs/screenshots/     capturas usadas na galeria
-└── render.yaml           blueprint de deploy da API no Render
+│   ├── src/              app, маршруты (health, public menu, orders, admin), middlewares
+│   └── prisma/           schema, миграции и идемпотентный seed
+├── docs/screenshots/     скриншоты для галереи
+└── render.yaml           blueprint деплоя API на Render
 ```
 
 ---
 
-## Como rodar localmente
+## Как запустить локально
 
-**Frontend** (ES Modules exigem servidor HTTP):
+**Фронтенд** (ES Modules требуют HTTP-сервер):
 
 ```bash
-npx serve .            # dentro de produtos/CardapioPro
+npx serve .            # внутри produtos/CardapioPro
 ```
 
-Em ambiente local o frontend aponta automaticamente para a API em `http://localhost:3333`.
+В локальном окружении фронтенд автоматически указывает на API по адресу `http://localhost:3333`.
 
-**Backend** (API + banco):
+**Бэкенд** (API + база):
 
 ```bash
 cd backend
-cp .env.example .env          # preencha as variáveis (ver abaixo)
+cp .env.example .env          # заполните переменные (см. ниже)
 npm install
 npm run prisma:generate
 npm run prisma:migrate
 npm run seed
-npm run dev                   # sobe a API em http://localhost:3333
+npm run dev                   # поднимает API на http://localhost:3333
 ```
 
-O seed reutiliza `src/data.js` como fonte única do cardápio e é idempotente.
+Seed переиспользует `src/data.js` как единственный источник меню и идемпотентен.
 
 ---
 
-## Variáveis de ambiente
+## Переменные окружения
 
-Apenas os nomes (defina os valores no seu ambiente / painel de deploy):
+Только имена (значения задайте в своём окружении / панели деплоя):
 
 ```
 DATABASE_URL
@@ -163,17 +163,18 @@ PORT
 
 ---
 
-## Escopo
+## Область применения
 
-MesaFlow é um **canal próprio de pedidos** para o restaurante. Não é um substituto direto
-do iFood: a proposta é dar ao restaurante um canal onde ele recebe pedidos **sem comissão
-de marketplace nos pedidos feitos pelo próprio canal**, com painel operacional próprio.
+MesaFlow — это **собственный канал заказов** для заведения. Это не прямая замена
+агрегаторам доставки: идея в том, чтобы дать заведению канал, где оно принимает заказы
+**без комиссии маркетплейса на заказах, сделанных через собственный канал**, с собственной
+операционной панелью.
 
-### Fora do escopo atual
+### Вне текущей области
 
-Estoque, financeiro, PDV, QR por mesa, WhatsApp API oficial, tela de cozinha, múltiplos
-usuários e multiempresa.
+Склад, финансы, POS, QR по столам, официальный WhatsApp API, экран кухни, несколько
+пользователей и мультиаккаунт.
 
 ---
 
-Projeto de portfólio e base reutilizável para restaurantes.
+Портфолио-проект и переиспользуемая основа для заведений.
