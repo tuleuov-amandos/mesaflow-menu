@@ -13,8 +13,8 @@
 
 ## Ссылки
 
-- **Публичное демо:** https://mesaflow-menu.vercel.app
-- **Административная панель:** https://mesaflow-menu.vercel.app/admin (вход по паролю; пароль не публичный)
+- **Публичное демо:** https://qr-menu-coffee.vercel.app
+- **Административная панель:** https://qr-menu-coffee.vercel.app/admin (вход по паролю; пароль не публичный)
 - **Репозиторий:** https://github.com/RhanielRodri/mesaflow-menu
 
 ---
