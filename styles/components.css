@@ -411,8 +411,8 @@
 }
 
 .category-chip.active {
-  background: var(--clr-accent);
-  border-color: var(--clr-accent);
+  background: var(--clr-text-primary);
+  border-color: var(--clr-text-primary);
   color: #fff;
 }
 
