@@ -163,6 +163,40 @@ PORT
 
 ---
 
+## Multi-estabelecimento (multi-tenant)
+
+O design (layout, componentes e CSS) é **compartilhado** entre todos os
+estabelecimentos. O que muda por loja fica isolado em um módulo de dados:
+
+```
+src/tenants/
+├── index.js            registro dos estabelecimentos (slug -> loader)
+├── _TEMPLATE.js        modelo para abrir um novo estabelecimento
+└── beco-da-chapa.js    marca, cardápio, preços e textos da loja
+```
+
+O estabelecimento ativo é resolvido **em runtime pelo subdomínio**
+(`beco.seu-dominio.kz` → slug `beco`), com override `?r=<slug>` para testar em
+localhost/preview. `src/data.js` carrega o tenant correspondente e o restante do
+frontend não muda. A marca (logo, nome, cor de destaque, moeda) é aplicada em
+runtime a partir do próprio módulo.
+
+O mesmo módulo é a **fonte única**: o seed do backend
+(`backend/prisma/seed.js`) percorre o registro e popula um `Restaurant` por
+estabelecimento no banco, com seu cardápio e preços.
+
+**Para abrir uma nova cafeteria:**
+
+1. copie `src/tenants/_TEMPLATE.js` para `src/tenants/<slug>.js` e preencha
+   marca, contatos, categorias, produtos e preços;
+2. registre o slug em `src/tenants/index.js`;
+3. aponte o subdomínio `<slug>.seu-dominio` para o mesmo deploy;
+4. rode `npm run seed` no backend para popular o banco desse estabelecimento.
+
+Nenhuma alteração de layout ou CSS é necessária por loja.
+
+---
+
 ## Escopo
 
 MesaFlow é um **canal próprio de pedidos** para o restaurante. Não é um substituto direto

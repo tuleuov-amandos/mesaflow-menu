@@ -20,5 +20,31 @@ function resolveApiUrl() {
 
 export const API_URL = resolveApiUrl();
 
-// Slug do restaurante no backend (deve casar com o seed).
-export const RESTAURANT_SLUG = 'beco-da-chapa';
+// Slug padrão quando o subdomínio não identifica um estabelecimento
+// (domínio raiz, preview da Vercel, localhost sem ?r=).
+const DEFAULT_SLUG = 'beco-da-chapa';
+
+// Resolve qual estabelecimento carregar. Prioridade:
+//   1. ?r=<slug> na URL (útil para testar tenants em localhost/preview);
+//   2. primeiro rótulo do subdomínio (ex.: beco.seu-dominio.kz -> 'beco');
+//   3. DEFAULT_SLUG.
+export function resolveSlug() {
+  if (typeof window === 'undefined') return DEFAULT_SLUG;
+
+  const override = new URLSearchParams(window.location.search).get('r');
+  if (override) return override.trim().toLowerCase();
+
+  const host = window.location.hostname;
+  const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+  if (isLocal) return DEFAULT_SLUG;
+
+  const parts = host.split('.');
+  // Precisa de subdomínio real (a.b.c). Ignora www e domínios de 1–2 rótulos.
+  if (parts.length > 2 && parts[0] !== 'www') return parts[0].toLowerCase();
+
+  return DEFAULT_SLUG;
+}
+
+// Slug do estabelecimento ativo (deve casar com o registro em tenants/index.js
+// e com o seed do backend).
+export const RESTAURANT_SLUG = resolveSlug();

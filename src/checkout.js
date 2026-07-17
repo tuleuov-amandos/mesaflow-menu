@@ -68,7 +68,7 @@ export function initCheckoutForm(formEl, onSuccess) {
 export function renderCheckoutSummary(containerEl) {
   const items = getItems();
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
+  const deliveryFee = subtotal >= STORE.freeDeliveryAbove ? 0 : STORE.deliveryFee;
   const total = subtotal + deliveryFee;
 
   containerEl.innerHTML = `
@@ -200,7 +200,7 @@ function buildOrderPayload(data) {
 function buildWhatsAppMessage(data, orderLabel = null) {
   const items = getItems();
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal >= 80 ? 0 : STORE.deliveryFee;
+  const deliveryFee = subtotal >= STORE.freeDeliveryAbove ? 0 : STORE.deliveryFee;
   const total = subtotal + deliveryFee;
 
   const itemLines = items.map(i => {
@@ -222,7 +222,7 @@ function buildWhatsAppMessage(data, orderLabel = null) {
   const feeLine = deliveryFee === 0 ? 'Grátis 🎉' : formatPrice(deliveryFee);
 
   const lines = [
-    `🔥 *${STORE.name} — Novo Pedido*`,
+    `${STORE.logoEmoji ?? '🛎️'} *${STORE.name} — Novo Pedido*`,
     orderLabel ? `🧾 *Pedido:* ${orderLabel}` : null,
     ``,
     `👤 *Cliente:* ${data.name}`,

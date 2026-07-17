@@ -108,6 +108,34 @@ function initRotatingBanner() {
   setInterval(update, 4000);
 }
 
+// ─── Marca (aplicada em runtime a partir do tenant ativo) ─────────────────────
+
+function applyBrand() {
+  const name = STORE.name;
+  const emoji = STORE.logoEmoji ?? '';
+
+  document.title = `${name} — Cardápio`;
+
+  const setText = (id, text) => { const el = $(id); if (el) el.textContent = text; };
+  setText('brandName', name);
+  setText('brandNameLocation', name);
+  setText('brandNameFooter', name);
+  setText('brandLogoIcon', emoji);
+  setText('brandLogoIconFooter', emoji);
+  if (STORE.address) setText('brandAddress', STORE.address);
+  setText('brandCopy', `© ${new Date().getFullYear()} ${name}. Todos os direitos reservados.`);
+
+  const logoLink = document.querySelector('.header__logo');
+  if (logoLink) logoLink.setAttribute('aria-label', `${name} — início`);
+
+  // Cor de destaque da marca via CSS vars.
+  const root = document.documentElement.style;
+  if (STORE.accent)       root.setProperty('--clr-accent', STORE.accent);
+  if (STORE.accentDark)   root.setProperty('--clr-accent-dark', STORE.accentDark);
+  if (STORE.accentLight)  root.setProperty('--clr-accent-light', STORE.accentLight);
+  if (STORE.accentBorder) root.setProperty('--clr-accent-border', STORE.accentBorder);
+}
+
 // ─── Store status ─────────────────────────────────────────────────────────────
 
 function updateStoreStatus() {
@@ -236,6 +264,7 @@ document.addEventListener('cart:updated', refreshCart);
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 function init() {
+  applyBrand();
   updateStoreStatus();
 
   const featured = PRODUCTS.filter(p => p.featured && p.available);

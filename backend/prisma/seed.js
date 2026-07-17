@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { STORE, CATEGORIES, PRODUCTS } from '../../src/data.js';
+import { TENANTS } from '../../src/tenants/index.js';
 
 const prisma = new PrismaClient();
-
-const RESTAURANT_SLUG = 'beco-da-chapa';
 
 function toCents(value) {
   return Math.round(value * 100);
@@ -26,9 +24,11 @@ function buildCustomizationConfig(product) {
   return null;
 }
 
-async function main() {
+async function seedTenant(slug, tenant) {
+  const { STORE, CATEGORIES, PRODUCTS } = tenant;
+
   const restaurant = await prisma.restaurant.upsert({
-    where: { slug: RESTAURANT_SLUG },
+    where: { slug },
     update: {
       name: STORE.name,
       phone: STORE.phone,
@@ -38,7 +38,7 @@ async function main() {
     },
     create: {
       name: STORE.name,
-      slug: RESTAURANT_SLUG,
+      slug,
       phone: STORE.phone,
       whatsapp: STORE.whatsapp,
       deliveryFeeCents: toCents(STORE.deliveryFee),
@@ -100,6 +100,14 @@ async function main() {
 
   const productCount = await prisma.product.count({ where: { restaurantId: restaurant.id } });
   console.log(`Seed concluído: ${restaurant.name} · ${menuCategories.length} categorias · ${productCount} produtos.`);
+}
+
+async function main() {
+  // Popula todos os estabelecimentos registrados em src/tenants/index.js.
+  for (const [slug, load] of Object.entries(TENANTS)) {
+    const tenant = await load();
+    await seedTenant(slug, tenant);
+  }
 }
 
 main()
