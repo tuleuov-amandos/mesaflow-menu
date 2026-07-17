@@ -58,18 +58,15 @@ export function renderProductCard(product) {
           data-fav="${product.id}"
           aria-label="${isFav ? 'Убрать из избранного' : 'Добавить в избранное'}"
         >${isFav ? '❤️' : '🤍'}</button>
+        <button
+          class="product-card__add${hasOptions ? ' product-card__add--options' : ''}"
+          data-add="${product.id}"
+          aria-label="Добавить ${product.name} в корзину"
+        >${hasOptions ? '🔧' : '+'}</button>
       </div>
       <div class="product-card__body">
         <h3 class="product-card__name">${product.name}</h3>
-        <p class="product-card__desc">${product.description}</p>
-        <div class="product-card__footer">
-          <span class="product-card__price">${formatPrice(product.price)}${hasOptions ? '<span class="product-card__price-from">от</span>' : ''}</span>
-          <button
-            class="product-card__add${hasOptions ? ' product-card__add--options' : ''}"
-            data-add="${product.id}"
-            aria-label="Добавить ${product.name} в корзину"
-          >${hasOptions ? '🔧' : '+'}</button>
-        </div>
+        <span class="product-card__price">${hasOptions ? '<span class="product-card__price-from">от</span> ' : ''}${formatPrice(product.price)}</span>
       </div>
     </article>
   `;

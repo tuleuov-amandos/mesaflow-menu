@@ -1,14 +1,15 @@
 :root {
-  /* Colors — палитра Drinkit: белый/светло-серый фон + индиго-синий акцент */
-  --clr-bg: #f1f3f6;             /* светло-холодно-серый фон страницы */
+  /* Colors — палитра Drinkit: белый фон + индиго-синий акцент */
+  --clr-bg: #ffffff;             /* чистый белый фон (как меню Drinkit) */
   --clr-bg-card: #ffffff;        /* белые карточки */
-  --clr-bg-elevated: #eceff3;    /* поля ввода, чипы, приподнятые блоки */
+  --clr-bg-elevated: #f1f3f6;    /* поля ввода, чипы, приподнятые блоки */
   --clr-bg-overlay: rgba(18, 20, 34, 0.50);
 
   --clr-accent: #1e2ca0;         /* фирменный индиго-синий Drinkit */
   --clr-accent-dark: #171f80;
   --clr-accent-light: rgba(30, 44, 160, 0.09);
   --clr-accent-border: rgba(30, 44, 160, 0.28);
+  --clr-price: #3568d6;          /* более светлый синий для цен (как в меню Drinkit) */
 
   --clr-text-primary: #14151a;   /* почти-чёрный */
   --clr-text-secondary: #5c606b; /* холодный серый */
