@@ -114,7 +114,7 @@ function updateStoreStatus() {
   const open = isStoreOpen();
   if (!open && storeClosedBanner) storeClosedBanner.removeAttribute('hidden');
   if (storeStatusDot) storeStatusDot.className = `status-dot status-dot--${open ? 'open' : 'closed'}`;
-  if (storeStatusText) storeStatusText.textContent = open ? 'Aberto agora' : 'Fechado';
+  if (storeStatusText) storeStatusText.textContent = open ? 'Открыто сейчас' : 'Закрыто';
 }
 
 // ─── Event delegation: catalog ───────────────────────────────────────────────
@@ -129,12 +129,12 @@ productsGrid.addEventListener('click', (e) => {
     if (product.customizations || product.drinkOptions) {
       openCustomizationModal(product, (result) => {
         addItemWithCustomizations(product, result);
-        showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+        showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
       });
     } else {
       addItem(product);
       animateAddBtn(addBtn);
-      showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+      showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
     }
     return;
   }
@@ -145,8 +145,8 @@ productsGrid.addEventListener('click', (e) => {
     const isFav = toggleFavorite(id);
     favBtn.textContent = isFav ? '❤️' : '🤍';
     favBtn.classList.toggle('active', isFav);
-    favBtn.setAttribute('aria-label', isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
-    showToast(toastContainer, isFav ? '❤️ Adicionado aos favoritos' : '🤍 Removido dos favoritos');
+    favBtn.setAttribute('aria-label', isFav ? 'Убрать из избранного' : 'Добавить в избранное');
+    showToast(toastContainer, isFav ? '❤️ Добавлено в избранное' : '🤍 Убрано из избранного');
   }
 });
 
@@ -175,11 +175,11 @@ featuredProducts.addEventListener('click', (e) => {
   if (product.customizations || product.drinkOptions) {
     openCustomizationModal(product, (result) => {
       addItemWithCustomizations(product, result);
-      showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+      showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
     });
   } else {
     addItem(product);
-    showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+    showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
   }
 });
 
@@ -253,8 +253,8 @@ function init() {
   initCheckoutForm(checkoutFormEl, (orderLabel) => {
     closeModal(modalEl, modalOverlay);
     clearCart();
-    const label = orderLabel ? ` Pedido ${orderLabel}` : '';
-    showToast(toastContainer, `🎉 Pedido enviado no WhatsApp!${label}`, 'success');
+    const label = orderLabel ? ` Заказ ${orderLabel}` : '';
+    showToast(toastContainer, `🎉 Заказ отправлен в WhatsApp!${label}`, 'success');
   });
 
   initRotatingBanner();

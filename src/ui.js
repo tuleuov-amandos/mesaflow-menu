@@ -1,8 +1,17 @@
-import { CATEGORY_META, REVIEWS, PRODUCTS, formatPrice } from './data.js';
+import { CATEGORY_META, REVIEWS, PRODUCTS, STORE, formatPrice } from './data.js';
 import { getFavorites, saveFavorites } from './storage.js';
 import { SITE_URL } from './config.js';
 
 let favorites = getFavorites();
+
+// Склонение слова «товар» по числу (1 товар, 2 товара, 5 товаров)
+function pluralizeItems(count) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'товар';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'товара';
+  return 'товаров';
+}
 
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 
@@ -47,18 +56,18 @@ export function renderProductCard(product) {
         <button
           class="product-card__favorite${isFav ? ' active' : ''}"
           data-fav="${product.id}"
-          aria-label="${isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}"
+          aria-label="${isFav ? 'Убрать из избранного' : 'Добавить в избранное'}"
         >${isFav ? '❤️' : '🤍'}</button>
       </div>
       <div class="product-card__body">
         <h3 class="product-card__name">${product.name}</h3>
         <p class="product-card__desc">${product.description}</p>
         <div class="product-card__footer">
-          <span class="product-card__price">${formatPrice(product.price)}${hasOptions ? '<span class="product-card__price-from">a partir de</span>' : ''}</span>
+          <span class="product-card__price">${formatPrice(product.price)}${hasOptions ? '<span class="product-card__price-from">от</span>' : ''}</span>
           <button
             class="product-card__add${hasOptions ? ' product-card__add--options' : ''}"
             data-add="${product.id}"
-            aria-label="Adicionar ${product.name} ao carrinho"
+            aria-label="Добавить ${product.name} в корзину"
           >${hasOptions ? '🔧' : '+'}</button>
         </div>
       </div>
@@ -115,8 +124,8 @@ export function renderCartItems(bodyEl, items) {
     bodyEl.innerHTML = `
       <div class="cart-empty">
         <div class="cart-empty__icon">🛒</div>
-        <div class="cart-empty__title">Carrinho vazio</div>
-        <div class="cart-empty__subtitle">Adicione itens do cardápio para começar seu pedido</div>
+        <div class="cart-empty__title">Корзина пуста</div>
+        <div class="cart-empty__subtitle">Добавьте позиции из меню, чтобы начать заказ</div>
       </div>
     `;
     return;
@@ -129,8 +138,8 @@ export function renderCartItems(bodyEl, items) {
     const customLines = [];
     if (item.removes?.length) customLines.push(...item.removes);
     if (item.extras?.length) customLines.push(...item.extras.map(e => `+${e}`));
-    if (item.meatPoint) customLines.push(`Ponto: ${item.meatPoint}`);
-    if (item.drinkChoice) customLines.push(`Bebida: ${item.drinkChoice}`);
+    if (item.size) customLines.push(`Размер: ${item.size}`);
+    if (item.drinkChoice) customLines.push(`Напиток: ${item.drinkChoice}`);
     const customHTML = customLines.length
       ? `<div class="cart-item__custom">${customLines.join(' · ')}</div>`
       : '';
@@ -145,12 +154,12 @@ export function renderCartItems(bodyEl, items) {
           ${customHTML}
           <div class="cart-item__price">${formatPrice(item.price)}</div>
           <div class="cart-item__controls">
-            <button class="qty-btn" data-qty-dec="${index}" aria-label="Diminuir quantidade">−</button>
+            <button class="qty-btn" data-qty-dec="${index}" aria-label="Уменьшить количество">−</button>
             <span class="qty-value">${item.qty}</span>
-            <button class="qty-btn" data-qty-inc="${index}" aria-label="Aumentar quantidade">+</button>
+            <button class="qty-btn" data-qty-inc="${index}" aria-label="Увеличить количество">+</button>
           </div>
         </div>
-        <button class="cart-item__remove" data-remove="${index}" aria-label="Remover ${item.name}">✕</button>
+        <button class="cart-item__remove" data-remove="${index}" aria-label="Убрать ${item.name}">✕</button>
       </div>
     `;
   }).join('');
@@ -162,33 +171,33 @@ export function renderCartFooter(footerEl, subtotal, deliveryFee, total, hasItem
     return;
   }
 
-  const isFreeDelivery = subtotal >= 80;
+  const isFreeDelivery = subtotal >= STORE.freeDeliveryAbove;
   const feeText = isFreeDelivery
-    ? '<span style="color: var(--clr-success)">Grátis 🎉</span>'
+    ? '<span style="color: var(--clr-success)">Бесплатно 🎉</span>'
     : formatPrice(deliveryFee);
-  const missing = 80 - subtotal;
+  const missing = STORE.freeDeliveryAbove - subtotal;
 
   footerEl.innerHTML = `
     ${!isFreeDelivery && missing > 0 ? `
       <p class="cart-totals__free-delivery">
-        Falta <strong>${formatPrice(missing)}</strong> para frete grátis!
+        До бесплатной доставки осталось <strong>${formatPrice(missing)}</strong>!
       </p>` : ''}
     <div class="cart-totals">
       <div class="cart-totals__row">
-        <span>Subtotal</span>
+        <span>Сумма</span>
         <span>${formatPrice(subtotal)}</span>
       </div>
       <div class="cart-totals__row">
-        <span>Taxa de entrega</span>
+        <span>Доставка</span>
         <span>${feeText}</span>
       </div>
       <div class="cart-totals__row cart-totals__row--total">
-        <span>Total</span>
+        <span>Итого</span>
         <span>${formatPrice(total)}</span>
       </div>
     </div>
     <button class="btn btn--primary btn--full" id="checkoutBtn">
-      Finalizar Pedido
+      Оформить заказ
     </button>
   `;
 
@@ -214,8 +223,8 @@ export function updateCartBar(barEl, infoEl, btnEl, count, total) {
     return;
   }
   barEl.removeAttribute('hidden');
-  infoEl.textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
-  btnEl.textContent = `Ver carrinho · ${formatPrice(total)}`;
+  infoEl.textContent = `${count} ${pluralizeItems(count)}`;
+  btnEl.textContent = `В корзину · ${formatPrice(total)}`;
 }
 
 // ─── Drawer & modal ──────────────────────────────────────────────────────────
@@ -296,7 +305,7 @@ export function renderReviews(containerEl, reviews) {
           <div class="review-card__name">${r.name}</div>
           <div class="review-card__time">${r.time}</div>
         </div>
-        <div class="review-card__stars" aria-label="${r.rating} estrelas">${stars(r.rating)}</div>
+        <div class="review-card__stars" aria-label="${r.rating} звёзд">${stars(r.rating)}</div>
       </div>
       <p class="review-card__text">"${r.text}"</p>
     </div>
@@ -318,15 +327,15 @@ export function toggleEmptyState(emptyEl, gridEl, show) {
 // ─── Share ───────────────────────────────────────────────────────────────────
 
 export async function shareMenu(toastContainerEl) {
-  const data = { title: 'Beco da Chapa', text: 'Confira o cardápio da Beco da Chapa!', url: SITE_URL };
+  const data = { title: 'Зёрна', text: 'Загляните в меню кофейни «Зёрна»!', url: SITE_URL };
   if (navigator.share) {
     try { await navigator.share(data); } catch { /* user cancelled */ }
   } else {
     try {
       await navigator.clipboard.writeText(SITE_URL);
-      showToast(toastContainerEl, '🔗 Link copiado para a área de transferência!', 'success');
+      showToast(toastContainerEl, '🔗 Ссылка скопирована в буфер обмена!', 'success');
     } catch {
-      showToast(toastContainerEl, '🔗 Copie o link da barra de endereços!', 'default');
+      showToast(toastContainerEl, '🔗 Скопируйте ссылку из адресной строки!', 'default');
     }
   }
 }

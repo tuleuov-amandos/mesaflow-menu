@@ -24,7 +24,7 @@ export function createApp() {
     cors({
       origin(origin, callback) {
         if (isAllowedOrigin(origin)) return callback(null, true);
-        callback(new Error(`Origem não permitida pelo CORS: ${origin}`));
+        callback(new Error(`Источник не разрешён политикой CORS: ${origin}`));
       },
     }),
   );
