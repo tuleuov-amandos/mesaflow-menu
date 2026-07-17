@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Backend do MesaFlow — fundação de pedidos e painel operacional.",
+  "description": "Бэкенд MesaFlow — основа для заказов и операционной панели.",
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",

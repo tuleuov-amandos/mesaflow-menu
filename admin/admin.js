@@ -69,7 +69,7 @@ function clearToken() {
 }
 
 function money(cents) {
-  return `${Math.round(Number(cents || 0) / 100)} ₽`;
+  return `${Math.round(Number(cents || 0) / 100).toLocaleString('ru-RU')} ₸`;
 }
 
 function formatDateTime(value) {

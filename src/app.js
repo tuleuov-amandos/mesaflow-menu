@@ -134,7 +134,7 @@ productsGrid.addEventListener('click', (e) => {
     } else {
       addItem(product);
       animateAddBtn(addBtn);
-      showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+      showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
     }
     return;
   }
@@ -175,11 +175,11 @@ featuredProducts.addEventListener('click', (e) => {
   if (product.customizations || product.drinkOptions) {
     openCustomizationModal(product, (result) => {
       addItemWithCustomizations(product, result);
-      showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+      showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
     });
   } else {
     addItem(product);
-    showToast(toastContainer, `✓ ${product.name} adicionado`, 'success');
+    showToast(toastContainer, `✓ ${product.name} добавлен`, 'success');
   }
 });
 

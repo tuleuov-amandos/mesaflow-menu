@@ -217,7 +217,7 @@ function buildWhatsAppMessage(data, orderLabel = null) {
   const addressLine = data.deliveryType === 'delivery' ? `📍 *Адрес:* ${data.address}\n` : '';
   const paymentLabels = { pix: 'Kaspi', cartao: 'Карта', dinheiro: 'Наличные' };
   const paymentLabel = paymentLabels[data.payment] ?? data.payment;
-  const changeLine = data.payment === 'dinheiro' && data.change ? `💵 *Сдача с:* ${data.change} ₽\n` : '';
+  const changeLine = data.payment === 'dinheiro' && data.change ? `💵 *Сдача с:* ${data.change} ₸\n` : '';
   const notesLine = data.notes ? `\n📝 *Комментарий:* ${data.notes}` : '';
   const feeLine = deliveryFee === 0 ? 'Бесплатно 🎉' : formatPrice(deliveryFee);
 
