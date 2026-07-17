@@ -30,38 +30,27 @@ export function initCheckoutForm(formEl, onSuccess) {
     input.addEventListener('change', syncConditionalGroups);
   });
 
-  const submitBtn = formEl.querySelector('[type="submit"]');
-
-  formEl.addEventListener('submit', async (e) => {
+  formEl.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!validate(formEl)) return;
     const data = buildFormData(formEl);
 
-    let orderLabel = null;
+    // Открываем WhatsApp сразу, синхронно в рамках клика. Если сначала ждать ответа
+    // API (который может «просыпаться» на бесплатном тарифе), браузер теряет «жест
+    // пользователя» и блокирует открытие вкладки — страница выглядит зависшей.
+    const message = buildWhatsAppMessage(data, null);
+    sendToWhatsApp(message);
+
+    // Сохраняем заказ в базе в фоне — «лучшее усилие». Даже если бэкенд недоступен
+    // или отвечает медленно, оформление по WhatsApp уже прошло и не блокируется.
     if (isApiEnabled()) {
-      const originalLabel = submitBtn?.textContent;
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Отправляем заказ...';
-      }
-      try {
-        const result = await createOrder(buildOrderPayload(data));
-        const number = result.order?.orderNumber;
-        orderLabel = number != null ? `#${number}` : result.order?.publicCode ?? null;
-      } catch (err) {
+      createOrder(buildOrderPayload(data)).catch((err) => {
         console.warn('Заказ не сохранён, продолжаем только через WhatsApp:', err);
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalLabel;
-        }
-      }
+      });
     }
 
-    const message = buildWhatsAppMessage(data, orderLabel);
-    sendToWhatsApp(message);
     resetForm();
-    onSuccess(orderLabel);
+    onSuccess(null);
   });
 }
 

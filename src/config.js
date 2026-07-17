@@ -2,7 +2,7 @@
 // При смене домена/деплоя обновите SITE_URL здесь и:
 //   1. продублируйте то же значение в <link rel="canonical"> и <meta property="og:url"> в index.html;
 //   2. перегенерируйте локальный QR (assets/images/qr-code.png), чтобы он указывал на SITE_URL.
-export const SITE_URL = 'https://mesaflow-menu.vercel.app';
+export const SITE_URL = 'https://qr-menu-coffee.vercel.app';
 
 // URL API заказов (бэкенд MesaFlow на Render). Заполните ПОСЛЕ создания
 // Web Service на Render (напр.: 'https://mesaflow-api.onrender.com'). Пока
