@@ -6,7 +6,7 @@ import orderRoutes from './routes/orders.js';
 import adminRoutes from './routes/admin.js';
 import { notFound, errorHandler } from './middlewares/error-handler.js';
 
-const STATIC_ALLOWED_ORIGINS = ['https://mesaflow-menu.vercel.app'];
+const STATIC_ALLOWED_ORIGINS = ['https://qr-menu-coffee.vercel.app'];
 
 function isAllowedOrigin(origin) {
   if (!origin) return true;
