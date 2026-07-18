@@ -426,6 +426,27 @@ export function formatPrice(value) {
   return `${Math.round(value).toLocaleString('ru-RU')} ₸`;
 }
 
+// Популярные позиции («хиты») для первого экрана: клиент, который уже знает меню,
+// заказывает любимое в один тап, не листая категории. Ранжируем детерминированно —
+// сначала избранные и «Хит продаж», затем остальные помеченные бейджем позиции,
+// сохраняя порядок меню при равенстве.
+export function getPopularProducts(limit = 8) {
+  const score = (p) => {
+    let s = 0;
+    if (p.featured) s += 3;
+    if (p.badge === 'Хит продаж') s += 3;
+    else if (p.badgeType === 'featured') s += 2; // «Фирменный»
+    else if (p.badge) s += 1;                     // «Новинка», «Комбо» и т.п.
+    return s;
+  };
+  return PRODUCTS
+    .map((product, index) => ({ product, index, score: score(product) }))
+    .filter((entry) => entry.product.available && entry.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, limit)
+    .map((entry) => entry.product);
+}
+
 export const REVIEWS = [
   {
     name: 'Карлос С.',

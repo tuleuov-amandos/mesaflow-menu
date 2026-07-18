@@ -258,6 +258,22 @@
 
 .featured { margin-bottom: var(--space-12); }
 
+.featured__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.featured__head .section-title { margin-bottom: 0; }
+
+.featured__hint {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--clr-accent);
+}
+
 .featured__scroll {
   display: flex;
   gap: var(--space-4);

@@ -1,4 +1,4 @@
-import { PRODUCTS, CATEGORIES, STORE, REVIEWS, PROMO_BANNERS, isStoreOpen, formatPrice } from './data.js';
+import { PRODUCTS, CATEGORIES, STORE, REVIEWS, PROMO_BANNERS, isStoreOpen, formatPrice, getPopularProducts } from './data.js';
 import { addItem, addItemWithCustomizations, removeItem, updateQty, getItems, getCount, getSubtotal, clearCart } from './cart.js';
 import { filterProducts } from './filters.js';
 import { initSearch } from './search.js';
@@ -252,8 +252,7 @@ function init() {
     },
   });
 
-  const featured = PRODUCTS.filter(p => p.featured && p.available);
-  renderFeatured(featuredProducts, featured);
+  renderFeatured(featuredProducts, getPopularProducts(8));
 
   renderCategories(categoryFilter, CATEGORIES, activeCategory);
 
