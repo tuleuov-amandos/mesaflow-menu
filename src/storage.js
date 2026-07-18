@@ -2,6 +2,7 @@ const CART_KEY = 'mesaflow_cart';
 const FAVORITES_KEY = 'mesaflow_favorites';
 const PROFILE_KEY = 'mesaflow_profile';
 const LAST_ORDER_KEY = 'mesaflow_last_order';
+const ACTIVE_ORDER_KEY = 'mesaflow_active_order';
 const LEGACY_CART_KEY = 'cardapiopro_cart';
 const LEGACY_FAVORITES_KEY = 'cardapiopro_favorites';
 
@@ -100,6 +101,35 @@ export function getLastOrder() {
 export function saveLastOrder(order) {
   try {
     localStorage.setItem(LAST_ORDER_KEY, JSON.stringify(order));
+  } catch {
+    // storage may be unavailable
+  }
+}
+
+// ─── Активный заказ (отслеживание) ────────────────────────────────────────────
+// Код и номер заказа, сохранённого в базе, — чтобы показывать клиенту живой
+// статус («Готовится» → «Готов»). Очищается, когда заказ выдан/отменён.
+
+export function getActiveOrder() {
+  try {
+    const raw = localStorage.getItem(ACTIVE_ORDER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveActiveOrder(order) {
+  try {
+    localStorage.setItem(ACTIVE_ORDER_KEY, JSON.stringify(order));
+  } catch {
+    // storage may be unavailable
+  }
+}
+
+export function clearActiveOrder() {
+  try {
+    localStorage.removeItem(ACTIVE_ORDER_KEY);
   } catch {
     // storage may be unavailable
   }

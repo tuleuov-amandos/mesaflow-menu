@@ -1,7 +1,7 @@
 import { STORE, formatPrice } from './data.js';
 import { getItems, getSubtotal, clearCart } from './cart.js';
 import { createOrder, isApiEnabled } from './api.js';
-import { getProfile, saveProfile, saveLastOrder } from './storage.js';
+import { getProfile, saveProfile, saveLastOrder, saveActiveOrder } from './storage.js';
 
 export function initCheckoutForm(formEl, onSuccess) {
   const deliveryTypeInputs = formEl.querySelectorAll('[name="deliveryType"]');
@@ -78,10 +78,23 @@ export function initCheckoutForm(formEl, onSuccess) {
 
     // Сохраняем заказ в базе в фоне — «лучшее усилие». Даже если бэкенд недоступен
     // или отвечает медленно, оформление по WhatsApp уже прошло и не блокируется.
+    // Если заказ сохранился — запоминаем его код для живого отслеживания статуса.
     if (isApiEnabled()) {
-      createOrder(buildOrderPayload(data)).catch((err) => {
-        console.warn('Заказ не сохранён, продолжаем только через WhatsApp:', err);
-      });
+      createOrder(buildOrderPayload(data))
+        .then((res) => {
+          const created = res?.order;
+          if (created?.publicCode) {
+            saveActiveOrder({
+              publicCode: created.publicCode,
+              orderNumber: created.orderNumber,
+              at: Date.now(),
+            });
+            document.dispatchEvent(new CustomEvent('order:created'));
+          }
+        })
+        .catch((err) => {
+          console.warn('Заказ не сохранён, продолжаем только через WhatsApp:', err);
+        });
     }
 
     resetForm();

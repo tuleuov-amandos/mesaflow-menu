@@ -1457,6 +1457,132 @@ textarea.form-input { resize: vertical; min-height: 80px; }
   .reorder-card__btn { width: 100%; }
 }
 
+/* ─── Order tracking card (живой статус) ─── */
+
+.track-card {
+  padding: var(--space-4) var(--space-5);
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-accent-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.track-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.track-card__head { min-width: 0; }
+
+.track-card__order {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--clr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.track-card__status {
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  margin-top: 2px;
+}
+
+.track-card__status--active   { color: var(--clr-accent); }
+.track-card__status--ready    { color: var(--clr-success); }
+.track-card__status--canceled { color: var(--clr-error); }
+.track-card__status--done     { color: var(--clr-text-secondary); }
+
+.track-card__eta {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--clr-bg-elevated);
+  color: var(--clr-text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  vertical-align: middle;
+}
+
+.track-card__refresh {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--clr-text-muted);
+  padding: var(--space-1);
+  transition: color var(--transition-fast);
+}
+
+.track-card__refresh:hover { color: var(--clr-text-primary); }
+
+.track-steps {
+  display: flex;
+  margin: var(--space-5) 0 var(--space-1);
+  padding: 0;
+  list-style: none;
+}
+
+.ostep {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.ostep__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--clr-border);
+  position: relative;
+  z-index: 1;
+}
+
+.ostep:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--clr-border);
+  z-index: 0;
+}
+
+.ostep__label { color: var(--clr-text-muted); }
+
+.ostep--done .ostep__dot     { background: var(--clr-accent); }
+.ostep--done::before          { background: var(--clr-accent); }
+.ostep--done .ostep__label   { color: var(--clr-text-secondary); }
+
+.ostep--current::before        { background: var(--clr-accent); }
+.ostep--current .ostep__label  { color: var(--clr-text-primary); font-weight: var(--weight-bold); }
+.ostep--current .ostep__dot {
+  background: var(--clr-accent);
+  box-shadow: 0 0 0 4px var(--clr-accent-light);
+  animation: track-pulse 1.8s ease infinite;
+}
+
+@keyframes track-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px var(--clr-accent-light); }
+  50%      { box-shadow: 0 0 0 7px rgba(30, 44, 160, 0.04); }
+}
+
+@media (max-width: 480px) {
+  .ostep { font-size: 0.68rem; }
+}
+
 /* ─── Store closed banner ────────────────── */
 
 .store-closed-banner {

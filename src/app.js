@@ -5,6 +5,7 @@ import { initSearch } from './search.js';
 import { openCustomizationModal } from './customize.js';
 import { initCheckoutForm, renderCheckoutSummary } from './checkout.js';
 import { initReorder } from './reorder.js';
+import { initOrderStatus, refreshOrderStatus } from './orderStatus.js';
 import {
   renderSkeletons, renderProductsGrid, renderFeatured, renderCategories,
   renderCartItems, renderCartFooter,
@@ -25,6 +26,7 @@ const searchInput       = $('searchInput');
 const emptyState        = $('emptyState');
 const toastContainer    = $('toastContainer');
 const reorderCard       = $('reorderCard');
+const orderTrackCard    = $('orderTrackCard');
 
 const cartBtn           = $('cartBtn');
 const cartCount         = $('cartCount');
@@ -234,11 +236,14 @@ $('promoBannerDismiss')?.addEventListener('click', () => {
 // ─── Cart event ───────────────────────────────────────────────────────────────
 
 document.addEventListener('cart:updated', refreshCart);
+document.addEventListener('order:created', refreshOrderStatus);
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 function init() {
   updateStoreStatus();
+
+  initOrderStatus(orderTrackCard);
 
   initReorder(reorderCard, {
     onReorder: () => {

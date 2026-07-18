@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import { STATUS_LABELS } from '../lib/order-status.js';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -186,6 +187,63 @@ router.post('/restaurants/:slug/orders', async (req, res, next) => {
         publicCode: order.publicCode,
         status: order.status,
         totalCents: order.totalCents,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Публичное отслеживание заказа по техническому коду (MF-XXXXXX). Код работает
+// как «капабилити-токен» отслеживания (как номер посылки): по нему клиент видит
+// только статус и ETA. Никаких персональных данных (имя, телефон, адрес,
+// комментарии) наружу не отдаём.
+router.get('/restaurants/:slug/orders/:publicCode/status', async (req, res, next) => {
+  try {
+    const restaurant = await prisma.restaurant.findUnique({
+      where: { slug: req.params.slug },
+      select: { id: true },
+    });
+    if (!restaurant) {
+      return res.status(404).json({ error: 'Кофейня не найдена.' });
+    }
+
+    const order = await prisma.order.findFirst({
+      where: { restaurantId: restaurant.id, publicCode: req.params.publicCode },
+      select: {
+        orderNumber: true,
+        publicCode: true,
+        status: true,
+        fulfillmentType: true,
+        etaMinutes: true,
+        createdAt: true,
+        updatedAt: true,
+        history: {
+          orderBy: { createdAt: 'asc' },
+          select: { status: true, etaMinutes: true, createdAt: true },
+        },
+      },
+    });
+    if (!order) {
+      return res.status(404).json({ error: 'Заказ не найден.' });
+    }
+
+    res.json({
+      order: {
+        orderNumber: order.orderNumber,
+        publicCode: order.publicCode,
+        status: order.status,
+        statusLabel: STATUS_LABELS[order.status] ?? order.status,
+        fulfillmentType: order.fulfillmentType,
+        etaMinutes: order.etaMinutes,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        history: order.history.map((h) => ({
+          status: h.status,
+          statusLabel: STATUS_LABELS[h.status] ?? h.status,
+          etaMinutes: h.etaMinutes,
+          createdAt: h.createdAt,
+        })),
       },
     });
   } catch (error) {

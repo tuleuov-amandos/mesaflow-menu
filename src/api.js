@@ -34,3 +34,26 @@ export async function createOrder(payload) {
   }
   return data;
 }
+
+// Публичный статус заказа по техническому коду (MF-XXXXXX). Возвращает только
+// статус/ETA/историю без персональных данных. Бросает ошибку с .status для
+// отличения «заказ не найден» (404) от сетевых сбоев.
+export async function getOrderStatus(publicCode) {
+  const url = `${API_URL}/api/public/restaurants/${RESTAURANT_SLUG}/orders/${encodeURIComponent(publicCode)}/status`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let response;
+  try {
+    response = await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.error || 'Не удалось получить статус заказа.');
+    error.status = response.status;
+    throw error;
+  }
+  return data.order;
+}
