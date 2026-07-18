@@ -133,6 +133,9 @@
           <span>Сейчас мы закрыты. Часы работы: Пн–Пт 08:00–22:00 | Сб–Вс 09:00–23:00</span>
         </div>
 
+        <!-- Повторить прошлый заказ (для постоянных клиентов) -->
+        <div class="reorder-card" id="reorderCard" hidden></div>
+
         <!-- Rotating promo banner -->
         <div class="promo-banner" id="promoBanner">
           <div class="promo-banner__content">
@@ -387,22 +390,22 @@
           <div class="form-group" id="deliveryTypeGroup">
             <div class="toggle-group">
               <label class="toggle-option">
-                <input type="radio" name="deliveryType" value="delivery" checked>
-                <div class="toggle-option__label">
-                  <span class="toggle-option__icon">🛵</span>
-                  <span class="toggle-option__text">Доставка</span>
-                </div>
-              </label>
-              <label class="toggle-option">
-                <input type="radio" name="deliveryType" value="retirada">
+                <input type="radio" name="deliveryType" value="retirada" checked>
                 <div class="toggle-option__label">
                   <span class="toggle-option__icon">🏃</span>
                   <span class="toggle-option__text">Самовывоз</span>
                 </div>
               </label>
+              <label class="toggle-option">
+                <input type="radio" name="deliveryType" value="delivery">
+                <div class="toggle-option__label">
+                  <span class="toggle-option__icon">🛵</span>
+                  <span class="toggle-option__text">Доставка</span>
+                </div>
+              </label>
             </div>
           </div>
-          <div class="form-group" id="addressGroup">
+          <div class="form-group" id="addressGroup" hidden>
             <label class="form-label" for="address">Полный адрес <span>*</span></label>
             <input class="form-input" type="text" id="address" placeholder="Улица, дом, квартира, район" autocomplete="street-address">
           </div>

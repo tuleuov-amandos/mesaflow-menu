@@ -1,15 +1,22 @@
 import { getCart, saveCart, clearCartStorage } from './storage.js';
 import { PRODUCTS } from './data.js';
 
+// Приводит одну позицию к текущему меню: сбрасывает размер, если товар его
+// больше не поддерживает. Возвращает исходный объект, если менять нечего.
+function sanitizeItem(item) {
+  const product = PRODUCTS.find((p) => p.id === item.id);
+  if (item.size && product?.customizations?.supportsSize === false) {
+    return { ...item, size: null };
+  }
+  return item;
+}
+
 function sanitizeStoredItems(stored) {
   let changed = false;
   const cleaned = stored.map((item) => {
-    const product = PRODUCTS.find((p) => p.id === item.id);
-    if (item.size && product?.customizations?.supportsSize === false) {
-      changed = true;
-      return { ...item, size: null };
-    }
-    return item;
+    const clean = sanitizeItem(item);
+    if (clean !== item) changed = true;
+    return clean;
   });
   if (changed) saveCart(cleaned);
   return cleaned;
@@ -56,6 +63,20 @@ export function addItemWithCustomizations(product, result) {
   });
   persist();
   dispatch();
+}
+
+// Добавляет в корзину позиции из снимка прошлого заказа («Повторить заказ»).
+// Отбрасывает товары, которых больше нет в меню, и чистит устаревшие размеры.
+// Возвращает число фактически добавленных позиций.
+export function addStoredItems(storedItems) {
+  const valid = (storedItems ?? [])
+    .filter((item) => PRODUCTS.find((p) => p.id === item.id))
+    .map((item) => sanitizeItem({ ...item }));
+  if (!valid.length) return 0;
+  items.push(...valid);
+  persist();
+  dispatch();
+  return valid.length;
 }
 
 export function removeItem(index) {

@@ -1,6 +1,7 @@
 import { STORE, formatPrice } from './data.js';
 import { getItems, getSubtotal, clearCart } from './cart.js';
 import { createOrder, isApiEnabled } from './api.js';
+import { getProfile, saveProfile, saveLastOrder } from './storage.js';
 
 export function initCheckoutForm(formEl, onSuccess) {
   const deliveryTypeInputs = formEl.querySelectorAll('[name="deliveryType"]');
@@ -15,10 +16,34 @@ export function initCheckoutForm(formEl, onSuccess) {
     isCash ? changeGroup.removeAttribute('hidden') : changeGroup.setAttribute('hidden', '');
   };
 
+  // Подставляем данные постоянного клиента: имя, телефон и предпочтения
+  // получения/оплаты из прошлого заказа. Так типовой самовывоз сводится к
+  // подтверждению без повторного заполнения формы.
+  const prefillFromProfile = () => {
+    const profile = getProfile();
+    if (!profile) return;
+    const nameEl = formEl.querySelector('#customerName');
+    const phoneEl = formEl.querySelector('#customerPhone');
+    if (nameEl && profile.name) nameEl.value = profile.name;
+    if (phoneEl && profile.phone) phoneEl.value = profile.phone;
+    if (profile.deliveryType) {
+      const el = formEl.querySelector(`[name="deliveryType"][value="${profile.deliveryType}"]`);
+      if (el) el.checked = true;
+    }
+    if (profile.payment) {
+      const el = formEl.querySelector(`[name="payment"][value="${profile.payment}"]`);
+      if (el) el.checked = true;
+    }
+  };
+
   const resetForm = () => {
     formEl.reset();
     formEl.querySelectorAll('.form-error').forEach(el => el.remove());
     formEl.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    // Сначала возвращаем форму в состояние «постоянный клиент» (а не пустое),
+    // затем синхронизируем условные поля — чтобы адрес/сдача соответствовали
+    // подставленному выбору получения и оплаты.
+    prefillFromProfile();
     syncConditionalGroups();
   };
 
@@ -34,6 +59,16 @@ export function initCheckoutForm(formEl, onSuccess) {
     e.preventDefault();
     if (!validate(formEl)) return;
     const data = buildFormData(formEl);
+
+    // Запоминаем клиента и снимок заказа ДО очистки корзины: имя/телефон и
+    // предпочтения — для автозаполнения, позиции — для «Повторить заказ».
+    saveProfile({
+      name: data.name,
+      phone: data.phone,
+      deliveryType: data.deliveryType,
+      payment: data.payment,
+    });
+    saveLastOrder({ items: getItems(), at: Date.now() });
 
     // Открываем WhatsApp сразу, синхронно в рамках клика. Если сначала ждать ответа
     // API (который может «просыпаться» на бесплатном тарифе), браузер теряет «жест
@@ -52,6 +87,11 @@ export function initCheckoutForm(formEl, onSuccess) {
     resetForm();
     onSuccess(null);
   });
+
+  // Стартовое состояние формы: подставляем профиль постоянного клиента и
+  // приводим условные поля (адрес/сдача) в соответствие с текущим выбором.
+  prefillFromProfile();
+  syncConditionalGroups();
 }
 
 export function renderCheckoutSummary(containerEl) {

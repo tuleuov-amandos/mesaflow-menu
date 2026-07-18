@@ -4,6 +4,7 @@ import { filterProducts } from './filters.js';
 import { initSearch } from './search.js';
 import { openCustomizationModal } from './customize.js';
 import { initCheckoutForm, renderCheckoutSummary } from './checkout.js';
+import { initReorder } from './reorder.js';
 import {
   renderSkeletons, renderProductsGrid, renderFeatured, renderCategories,
   renderCartItems, renderCartFooter,
@@ -23,6 +24,7 @@ const categoryFilter    = $('categoryFilter');
 const searchInput       = $('searchInput');
 const emptyState        = $('emptyState');
 const toastContainer    = $('toastContainer');
+const reorderCard       = $('reorderCard');
 
 const cartBtn           = $('cartBtn');
 const cartCount         = $('cartCount');
@@ -237,6 +239,13 @@ document.addEventListener('cart:updated', refreshCart);
 
 function init() {
   updateStoreStatus();
+
+  initReorder(reorderCard, {
+    onReorder: () => {
+      openCartDrawer(cartDrawer, cartOverlay);
+      showToast(toastContainer, '🔁 Заказ добавлен в корзину', 'success');
+    },
+  });
 
   const featured = PRODUCTS.filter(p => p.featured && p.available);
   renderFeatured(featuredProducts, featured);

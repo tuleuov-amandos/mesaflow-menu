@@ -1396,6 +1396,67 @@ textarea.form-input { resize: vertical; min-height: 80px; }
 
 .promo-banner__dismiss:hover { color: var(--clr-text-primary); }
 
+/* ─── Reorder card (постоянный клиент) ───── */
+
+.reorder-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--clr-accent-light);
+  border: 1px solid var(--clr-accent-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+}
+
+.reorder-card__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1;
+}
+
+.reorder-card__icon { font-size: 1.5rem; flex-shrink: 0; }
+
+.reorder-card__text { min-width: 0; }
+
+.reorder-card__title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--clr-text-primary);
+}
+
+.reorder-card__summary {
+  font-size: var(--text-xs);
+  color: var(--clr-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reorder-card__btn {
+  flex-shrink: 0;
+  padding: var(--space-3) var(--space-5);
+  background: var(--clr-accent);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.reorder-card__btn:hover { background: var(--clr-accent-dark); }
+.reorder-card__btn:active { transform: scale(0.97); }
+
+@media (max-width: 640px) {
+  .reorder-card { flex-direction: column; align-items: stretch; }
+  .reorder-card__btn { width: 100%; }
+}
+
 /* ─── Store closed banner ────────────────── */
 
 .store-closed-banner {
