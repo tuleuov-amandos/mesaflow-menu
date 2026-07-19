@@ -2,7 +2,9 @@
 
 .hero {
   position: relative;
-  min-height: calc(100vh - var(--header-height));
+  /* Ниже, чем весь экран: меню «Популярное» должно выглядывать сразу под hero,
+     а не прятаться под сгибом — аудитория пришла заказать, а не читать баннер. */
+  min-height: 480px;
   display: grid;
   grid-template-columns: 1fr 42%;
   overflow: hidden;
@@ -24,12 +26,12 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-16) var(--space-6) var(--space-16) max(var(--space-6), calc((100vw - var(--max-width)) / 2 + var(--space-6)));
+  padding: var(--space-10) var(--space-6) var(--space-10) max(var(--space-6), calc((100vw - var(--max-width)) / 2 + var(--space-6)));
 }
 
 @media (max-width: 900px) {
   .hero__content {
-    padding: var(--space-12) var(--space-5) var(--space-10);
+    padding: var(--space-8) var(--space-5) var(--space-8);
     order: 2;
   }
 }
@@ -168,7 +170,7 @@
 @media (max-width: 900px) {
   .hero__image {
     order: 1;
-    height: 280px;
+    height: 190px;
   }
 }
 
@@ -193,10 +195,24 @@
   }
 }
 
+/* На телефоне ужимаем hero до сути (картинка + заголовок + статус + одна
+   кнопка): подзаголовок, рейтинг и «Поделиться» скрыты, чтобы «Популярное»
+   с товарами выходило на первый экран — аудитория пришла заказать. */
+@media (max-width: 640px) {
+  .hero { min-height: 0; }
+  .hero__eyebrow { margin-bottom: var(--space-4); }
+  .hero__title { margin-bottom: var(--space-4); }
+  .hero__subtitle { display: none; }
+  .hero__rating { display: none; }
+  .hero__actions { margin-bottom: var(--space-5); }
+  #heroShareBtn { display: none; }
+  .hero__actions .btn { flex: 1; }
+}
+
 /* ─── Catalog ────────────────────────────── */
 
 .catalog {
-  padding: var(--space-16) 0 var(--space-24);
+  padding: var(--space-6) 0 var(--space-24);
 }
 
 .catalog__controls {

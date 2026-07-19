@@ -139,22 +139,22 @@
         <!-- Повторить прошлый заказ (для постоянных клиентов) -->
         <div class="reorder-card" id="reorderCard" hidden></div>
 
-        <!-- Rotating promo banner -->
-        <div class="promo-banner" id="promoBanner">
-          <div class="promo-banner__content">
-            <span class="promo-banner__icon" id="promoBannerIcon" aria-hidden="true">🎉</span>
-            <span class="promo-banner__text" id="promoBannerText">Бесплатная доставка при заказе от 5000 ₸!</span>
-          </div>
-          <button class="promo-banner__dismiss" id="promoBannerDismiss" aria-label="Закрыть баннер">✕</button>
-        </div>
-
-        <!-- Популярное — первичная точка заказа (хиты в один тап) -->
+        <!-- Популярное — первичная точка заказа (хиты в один тап), сразу под hero -->
         <div class="featured">
           <div class="featured__head">
             <h2 class="section-title">Популярное</h2>
             <span class="featured__hint">Любимое — в один тап 👆</span>
           </div>
           <div class="featured__scroll" id="featuredProducts" role="list" aria-label="Популярные товары"></div>
+        </div>
+
+        <!-- Rotating promo banner (реклама — ниже товаров) -->
+        <div class="promo-banner" id="promoBanner">
+          <div class="promo-banner__content">
+            <span class="promo-banner__icon" id="promoBannerIcon" aria-hidden="true">🎉</span>
+            <span class="promo-banner__text" id="promoBannerText">Бесплатная доставка при заказе от 5000 ₸!</span>
+          </div>
+          <button class="promo-banner__dismiss" id="promoBannerDismiss" aria-label="Закрыть баннер">✕</button>
         </div>
 
         <!-- Catalog controls -->
